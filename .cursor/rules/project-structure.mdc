@@ -1,0 +1,765 @@
+---
+description: Project structure and architecture documentation for HeyFriendz Flutter app
+globs: ["**/*.dart", "**/*.md"]
+alwaysApply: true
+---
+
+## 🏗️ Project Structure
+
+```
+lib/
+├── main.dart                          # Application entry point
+├── firebase_options.dart              # Firebase configuration
+└── app/
+    ├── core/                          # Core layer
+    │   ├── constants/                 # App constants
+    │   │   ├── app_constants.dart     # General app constants
+    │   │   ├── api_constants.dart     # API endpoints
+    │   │   └── storage_keys.dart      # Local storage keys
+    │   ├── theme/                     # Theme configuration
+    │   │   ├── app_colors.dart        # Color palette
+    │   │   ├── app_text_styles.dart   # Typography
+    │   │   ├── app_theme.dart         # Theme data
+    │   │   └── app_dimensions.dart    # Spacing & dimensions
+    │   └── utils/                     # Utility classes
+    │       ├── validators.dart        # Input validators
+    │       ├── date_utils.dart        # Date formatting
+    │       └── string_extensions.dart # String helpers
+    ├── data/                          # Data layer
+    │   └── models/                    # Data models
+    │       ├── user_model.dart
+    │       ├── child_profile_model.dart
+    │       ├── story_model.dart
+    │       ├── parent_model.dart
+    │       └── language_model.dart
+    ├── modules/                       # Feature modules (MVC)
+    │   ├── splash/                    # Splash screen module
+    │   │   ├── controllers/           # Business logic + Data fetching
+    │   │   │   └── splash_controller.dart
+    │   │   └── views/                 # UI components
+    │   │       └── splash_view.dart
+    │   ├── language/                  # Language selection module
+    │   │   ├── controllers/           # Business logic + Data fetching
+    │   │   │   └── language_controller.dart
+    │   │   └── views/                 # UI components
+    │   │       └── language_view.dart
+    │   ├── welcome/                   # Welcome screen module
+    │   │   ├── controllers/           # Business logic + Data fetching
+    │   │   │   └── welcome_controller.dart
+    │   │   └── views/                 # UI components
+    │   │       └── welcome_view.dart
+    │   ├── onboarding/                # Parent onboarding module
+    │   │   ├── controllers/           # Business logic + Data fetching
+    │   │   │   ├── onboarding_controller.dart
+    │   │   │   ├── account_setup_controller.dart
+    │   │   │   └── child_profile_setup_controller.dart
+    │   │   └── views/                 # UI components
+    │   │       ├── onboarding_view.dart
+    │   │       ├── account_setup_view.dart
+    │   │       ├── child_profile_setup_view.dart
+    │   │       └── consent_privacy_view.dart
+    │   ├── auth/                      # Authentication module
+    │   │   ├── controllers/           # Business logic + Data fetching
+    │   │   │   ├── login_controller.dart
+    │   │   │   └── signup_controller.dart
+    │   │   └── views/                 # UI components
+    │   │       ├── login_view.dart
+    │   │       └── signup_view.dart
+    │   ├── profile_selection/         # Profile selection module
+    │   │   ├── controllers/           # Business logic + Data fetching
+    │   │   │   └── profile_selection_controller.dart
+    │   │   └── views/                 # UI components
+    │   │       └── profile_selection_view.dart
+    │   ├── kid_home/                  # Kid home screen module
+    │   │   ├── controllers/           # Business logic + Data fetching
+    │   │   │   └── kid_home_controller.dart
+    │   │   └── views/                 # UI components
+    │   │       └── kid_home_view.dart
+    │   ├── story/                     # Story module
+    │   │   ├── controllers/           # Business logic + Data fetching
+    │   │   │   ├── story_list_controller.dart
+    │   │   │   ├── story_generation_controller.dart
+    │   │   │   └── story_player_controller.dart
+    │   │   └── views/                 # UI components
+    │   │       ├── story_list_view.dart
+    │   │       ├── story_generation_view.dart
+    │   │       └── story_player_view.dart
+    │   ├── voice/                     # Voice storyteller module
+    │   │   ├── controllers/           # Business logic + Data fetching
+    │   │   │   └── voice_controller.dart
+    │   │   └── views/                 # UI components
+    │   │       └── voice_player_view.dart
+    │   ├── parental_controls/         # Parental controls module
+    │   │   ├── controllers/           # Business logic + Data fetching
+    │   │   │   ├── parental_dashboard_controller.dart
+    │   │   │   ├── content_filter_controller.dart
+    │   │   │   └── time_limits_controller.dart
+    │   │   └── views/                 # UI components
+    │   │       ├── parental_dashboard_view.dart
+    │   │       ├── content_filter_view.dart
+    │   │       └── time_limits_view.dart
+    │   └── profile/                   # Profile management module
+    │       ├── controllers/           # Business logic + Data fetching
+    │       │   ├── profile_controller.dart
+    │       │   └── profile_edit_controller.dart
+    │       └── views/                 # UI components
+    │           ├── profile_view.dart
+    │           └── profile_edit_view.dart
+    ├── routes/                        # Navigation routes
+    │   ├── app_pages.dart             # Route definitions
+    │   └── app_routes.dart            # Route constants
+    ├── services/                      # Services
+    │   ├── api_service.dart           # HTTP API service (singleton)
+    │   ├── auth_service.dart          # Authentication service
+    │   ├── storage_service.dart       # Local storage (GetStorage)
+    │   ├── ai_service.dart            # AI story generation service
+    │   ├── voice_service.dart         # Voice/TTS service
+    │   ├── notification_service.dart  # Push & local notifications
+    │   └── localization_service.dart  # Multi-language support
+    ├── widgets/                       # Shared UI components
+    │   ├── buttons/                   # Button widgets
+    │   │   ├── primary_button.dart
+    │   │   └── secondary_button.dart
+    │   ├── cards/                     # Card widgets
+    │   │   ├── story_card.dart
+    │   │   └── profile_card.dart
+    │   ├── inputs/                    # Input widgets
+    │   │   ├── custom_text_field.dart
+    │   │   └── custom_dropdown.dart
+    │   ├── dialogs/                   # Dialog widgets
+    │   │   ├── confirmation_dialog.dart
+    │   │   └── error_dialog.dart
+    │   ├── loading/                   # Loading widgets
+    │   │   └── loading_indicator.dart
+    │   └── common/                    # Common widgets
+    │       ├── custom_app_bar.dart
+    │       └── mascot_avatar.dart
+    └── translations/                  # Localization files
+        ├── en_US.dart                 # English
+        ├── es_ES.dart                 # Spanish
+        ├── fr_FR.dart                 # French
+        └── de_DE.dart                 # German
+```
+
+## 🛠️ Architecture - MVC Pattern
+
+This project follows the **MVC (Model-View-Controller)** pattern with **GetX** for state management:
+
+### MVC Architecture Implementation
+
+```
+Model Layer:
+├── Models (lib/app/data/models/)
+│   ├── Data structures (User, Story, Profile, etc.)
+│   ├── JSON serialization/deserialization
+│   └── Business entities
+
+Controller Layer:
+├── Controllers (lib/app/modules/*/controllers/)
+│   ├── Business logic
+│   ├── State management (GetX)
+│   ├── API calls (via Services)
+│   ├── Data transformation
+│   └── Navigation logic
+
+View Layer:
+├── Views (lib/app/modules/*/views/)
+│   ├── UI components
+│   ├── Widgets
+│   └── Screen layouts
+
+Services Layer (Shared):
+├── ApiService (HTTP client)
+├── AuthService (Authentication)
+├── StorageService (Local data)
+├── AIService (Story generation)
+├── VoiceService (TTS/Voice)
+├── NotificationService (Notifications)
+└── LocalizationService (i18n)
+```
+
+### Controller Responsibilities
+
+Controllers handle both business logic AND data operations:
+
+```dart
+// Example: StoryGenerationController
+class StoryGenerationController extends GetxController {
+  // Services (injected or singleton)
+  final AIService _aiService = Get.find<AIService>();
+  final StorageService _storageService = Get.find<StorageService>();
+  final ApiService _apiService = Get.find<ApiService>();
+  
+  // State
+  var currentStory = Rxn<StoryModel>();
+  var isGenerating = false.obs;
+  var generationProgress = 0.0.obs;
+  
+  // Generate AI story
+  Future<void> generateStory({
+    required String theme,
+    required String childName,
+    required int ageGroup,
+  }) async {
+    isGenerating.value = true;
+    generationProgress.value = 0.0;
+    
+    try {
+      // Call AI service
+      final storyData = await _aiService.generateStory(
+        theme: theme,
+        childName: childName,
+        ageGroup: ageGroup,
+        onProgress: (progress) {
+          generationProgress.value = progress;
+        },
+      );
+      
+      // Transform to model
+      currentStory.value = StoryModel.fromJson(storyData);
+      
+      // Save to local storage
+      await _storageService.saveStory(currentStory.value!);
+      
+      // Sync with backend
+      await _apiService.post('/stories', currentStory.value!.toJson());
+      
+      // Navigate to story player
+      Get.toNamed(Routes.STORY_PLAYER, arguments: currentStory.value);
+      
+    } catch (e) {
+      // Handle error
+      Get.snackbar('Error', 'Failed to generate story: $e');
+    } finally {
+      isGenerating.value = false;
+    }
+  }
+  
+  // Get story history
+  Future<List<StoryModel>> getStoryHistory() async {
+    try {
+      final stories = await _storageService.getStories();
+      return stories;
+    } catch (e) {
+      return [];
+    }
+  }
+}
+```
+
+### Key Components
+
+- **Models**: Data structures and entities (📋 To be implemented)
+- **Controllers**: Business logic + Data operations (📋 To be implemented)
+- **Views**: UI components and screens (📋 To be implemented)
+- **Services**: Shared utilities (API, AI, Voice, Auth) (📋 To be implemented)
+- **Routes**: Navigation management (📋 To be implemented)
+- **Core**: Theme, Constants, Utils (📋 To be implemented)
+- **Widgets**: Reusable UI components (📋 To be implemented)
+
+**Note**: No separate Repository layer. Controllers directly use Services for data operations.
+
+## 🎯 HeyFriendz - AI Storytelling Platform
+
+### Project Overview
+
+**HeyFriendz** is an AI-powered storytelling mobile application designed for children and their parents/guardians. The app provides interactive bedtime stories powered by AI, voice storytelling capabilities, and comprehensive parental controls to create a safe, engaging, and educational entertainment experience for families.
+
+### Target Audience
+
+#### Primary Users
+
+1. **Parents/Guardians**
+   - Create and manage child profiles
+   - Set parental controls and content filters
+   - Monitor story content and app usage
+   - Configure app settings and preferences
+   - Language selection and management
+
+2. **Children**
+   - Enjoy AI-generated personalized bedtime stories
+   - Interact with voice storyteller feature
+   - Navigate age-appropriate content
+   - Experience stories in their preferred language
+
+### Core Modules
+
+1. **Language Selection**
+   - Multi-language support with native script display
+   - Device language auto-detection as default
+   - Language selection during onboarding
+   - Profile-specific language settings
+
+2. **Welcome Screen**
+   - Mascot circular avatar
+   - App introduction and value proposition
+   - Feature highlights:
+     - ✨ AI Bedtime Stories
+     - 🎤 Voice Storyteller
+     - 🔒 Parental Controls
+   - "Get Started" CTA
+   - Rating and certification badge display
+
+3. **Parent Onboarding**
+   - Multi-step onboarding flow
+   - Account creation and verification
+   - Child profile setup
+   - Consent and privacy acceptance
+   - Initial preferences configuration
+
+4. **Profile Management**
+   - Multiple child profiles per parent account
+   - Profile selection screen (when multiple profiles exist)
+   - Automatic skip to child home (when single profile)
+   - Profile-specific settings and preferences
+
+5. **AI Bedtime Stories**
+   - Personalized story generation
+   - Age-appropriate content filtering
+   - Interactive storytelling elements
+   - Story history and favorites
+
+6. **Voice Storyteller**
+   - Voice-activated narration
+   - Multi-language voice support
+   - Character voice variations
+   - Interactive voice responses
+
+7. **Parental Controls**
+   - Content filtering and restrictions
+   - Time limits and usage monitoring
+   - Activity tracking and reports
+   - Profile access controls
+
+### Key Features
+
+- **Multi-language Support** with native script display
+- **AI-Powered Story Generation** personalized for each child
+- **Voice Narration** with character voices
+- **Comprehensive Parental Controls** for safety
+- **Profile Management** for multiple children
+- **Offline Story Access** for downloaded stories
+- **Story History & Favorites** tracking
+- **Age-Appropriate Content Filtering**
+
+## 📊 MVC Data Flow
+
+```
+User Interaction (View)
+    ↓
+Controller (Business Logic)
+    ↓
+Service (API/Storage/AI/Voice)
+    ↓
+Model (Data Structure)
+    ↓
+Controller (State Update)
+    ↓
+View (UI Update)
+```
+
+### Example Flow: Generating AI Story
+
+1. **View** → User selects story theme and taps "Generate"
+2. **Controller** → `storyGenerationController.generateStory()` called
+3. **Service** → `aiService.generateStory()` makes AI API request
+4. **Model** → Response converted to `StoryModel`
+5. **Controller** → Updates observable state `currentStory.value`
+6. **Controller** → Saves to local storage via `storageService`
+7. **Controller** → Navigates to Story Player screen
+8. **View** → Story Player displays generated story
+
+### Example Flow: Profile Selection
+
+1. **View** → App launches, user authenticated
+2. **Controller** → `profileSelectionController.loadProfiles()` called
+3. **Service** → `storageService.getChildProfiles()` fetches profiles
+4. **Model** → Data converted to `List<ChildProfileModel>`
+5. **Controller** → Checks profile count
+   - If 1 profile → Auto-navigate to Kid Home
+   - If >1 profiles → Show Profile Selection screen
+6. **View** → Displays appropriate screen
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Flutter SDK (^3.9.2)
+- Dart SDK (^3.0.0)
+- Android Studio / VS Code
+- Firebase account (for Auth & Notifications)
+- AI API access (for story generation)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd heyfriendz
+   ```
+
+2. **Install dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Configure Firebase**
+   - Add your `google-services.json` to `android/app/`
+   - Add your `GoogleService-Info.plist` to `ios/Runner/`
+   - Update `lib/firebase_options.dart` with your Firebase configuration
+
+4. **Configure API Keys**
+   - Create `.env` file in project root
+   - Add your AI API key and other credentials
+   ```
+   AI_API_KEY=your_ai_api_key
+   API_BASE_URL=your_api_url
+   ```
+
+5. **Run the application**
+   ```bash
+   flutter run
+   ```
+
+## 📦 Dependencies
+
+### Core Dependencies
+
+- **get**: ^4.7.2 - State management and dependency injection
+- **get_storage**: ^2.1.1 - Local storage
+- **http**: ^1.0.0 - HTTP client for API calls
+- **firebase_core**: ^2.24.0 - Firebase initialization
+- **firebase_auth**: ^4.16.0 - Firebase authentication
+- **firebase_messaging**: ^14.7.0 - Push notifications
+- **flutter_local_notifications**: ^17.0.0 - Local notifications
+- **google_fonts**: ^6.1.0 - Custom fonts
+- **intl**: ^0.19.0 - Internationalization
+- **flutter_tts**: ^4.0.0 - Text-to-speech for voice narration
+- **cached_network_image**: ^3.3.0 - Image caching
+- **lottie**: ^3.0.0 - Animations
+- **flutter_svg**: ^2.0.0 - SVG support
+
+### Development Dependencies
+
+- **flutter_launcher_icons**: ^0.13.1 - App icon generation
+- **flutter_native_splash**: ^2.3.0 - Splash screen
+- **build_runner**: ^2.4.0 - Code generation
+
+## 🔧 Configuration
+
+### Environment Setup
+
+- API base URL is configured in `lib/app/core/constants/api_constants.dart`
+- Storage keys in `lib/app/core/constants/storage_keys.dart`
+- App constants in `lib/app/core/constants/app_constants.dart`
+
+### Design System Configuration
+
+**Colors** (`lib/app/core/theme/app_colors.dart`):
+- Primary: Define your primary brand color
+- Secondary: Define your secondary brand color
+- Accent: Define accent colors
+- Background: Light/Dark mode backgrounds
+- Text: Text color hierarchy
+- Success/Error/Warning: Semantic colors
+
+**Typography** (`lib/app/core/theme/app_text_styles.dart`):
+- Font Family: Define primary font (e.g., Google Fonts)
+- Heading styles: h1, h2, h3, h4, h5, h6
+- Body styles: bodyLarge, bodyMedium, bodySmall
+- Button text: buttonText
+- Caption styles: caption
+
+**Dimensions** (`lib/app/core/theme/app_dimensions.dart`):
+- Spacing: paddingXS, paddingS, paddingM, paddingL, paddingXL
+- Border radius: radiusS, radiusM, radiusL
+- Icon sizes: iconS, iconM, iconL
+
+### Theme Configuration
+
+- Customize colors in `lib/app/core/theme/app_colors.dart`
+- Modify text styles in `lib/app/core/theme/app_text_styles.dart`
+- Update theme in `lib/app/core/theme/app_theme.dart`
+
+## 🛠️ Service Layer Setup
+
+### ApiService (Singleton)
+
+```dart
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class ApiService extends GetxService {
+  final http.Client _client;
+  final String baseUrl;
+  
+  ApiService({
+    http.Client? client,
+    String? baseUrl,
+  }) : _client = client ?? http.Client(),
+       baseUrl = baseUrl ?? ApiConstants.baseUrl;
+  
+  Future<ApiService> init() async {
+    // Initialization logic
+    // Note: http package doesn't support interceptors natively
+    // For auth headers, add them in each request method
+    return this;
+  }
+  
+  // Helper method to add auth headers
+  Map<String, String> _getHeaders({Map<String, String>? additionalHeaders}) {
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+    
+    // Add auth token if available
+    final authToken = Get.find<AuthService>().getToken();
+    if (authToken != null) {
+      headers['Authorization'] = 'Bearer $authToken';
+    }
+    
+    if (additionalHeaders != null) {
+      headers.addAll(additionalHeaders);
+    }
+    
+    return headers;
+  }
+  
+  Future<http.Response> get(String endpoint, {Map<String, dynamic>? params}) async {
+    final uri = Uri.parse('$baseUrl$endpoint').replace(queryParameters: 
+      params?.map((key, value) => MapEntry(key, value.toString()))
+    );
+    
+    return await _client.get(
+      uri,
+      headers: _getHeaders(),
+    );
+  }
+  
+  Future<http.Response> post(String endpoint, dynamic data) async {
+    final uri = Uri.parse('$baseUrl$endpoint');
+    
+    return await _client.post(
+      uri,
+      headers: _getHeaders(),
+      body: jsonEncode(data),
+    );
+  }
+  
+  Future<http.Response> put(String endpoint, dynamic data) async {
+    final uri = Uri.parse('$baseUrl$endpoint');
+    
+    return await _client.put(
+      uri,
+      headers: _getHeaders(),
+      body: jsonEncode(data),
+    );
+  }
+  
+  Future<http.Response> delete(String endpoint) async {
+    final uri = Uri.parse('$baseUrl$endpoint');
+    
+    return await _client.delete(
+      uri,
+      headers: _getHeaders(),
+    );
+  }
+}
+```
+
+### AIService (Singleton)
+
+```dart
+class AIService extends GetxService {
+  final ApiService _apiService = Get.find<ApiService>();
+  
+  Future<Map<String, dynamic>> generateStory({
+    required String theme,
+    required String childName,
+    required int ageGroup,
+    Function(double)? onProgress,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        '/ai/generate-story',
+        {
+          'theme': theme,
+          'child_name': childName,
+          'age_group': ageGroup,
+        },
+      );
+      
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+}
+```
+
+### StorageService (Singleton)
+
+```dart
+class StorageService extends GetxService {
+  late GetStorage _storage;
+  
+  Future<StorageService> init() async {
+    await GetStorage.init();
+    _storage = GetStorage();
+    return this;
+  }
+  
+  // Save story
+  Future<void> saveStory(StoryModel story) async {
+    List<dynamic> stories = _storage.read(StorageKeys.stories) ?? [];
+    stories.add(story.toJson());
+    await _storage.write(StorageKeys.stories, stories);
+  }
+  
+  // Get stories
+  Future<List<StoryModel>> getStories() async {
+    List<dynamic> stories = _storage.read(StorageKeys.stories) ?? [];
+    return stories.map((json) => StoryModel.fromJson(json)).toList();
+  }
+  
+  // Save child profile
+  Future<void> saveChildProfile(ChildProfileModel profile) async {
+    List<dynamic> profiles = _storage.read(StorageKeys.childProfiles) ?? [];
+    profiles.add(profile.toJson());
+    await _storage.write(StorageKeys.childProfiles, profiles);
+  }
+  
+  // Get child profiles
+  Future<List<ChildProfileModel>> getChildProfiles() async {
+    List<dynamic> profiles = _storage.read(StorageKeys.childProfiles) ?? [];
+    return profiles.map((json) => ChildProfileModel.fromJson(json)).toList();
+  }
+}
+```
+
+### VoiceService (Singleton)
+
+```dart
+class VoiceService extends GetxService {
+  final FlutterTts _flutterTts = FlutterTts();
+  
+  Future<VoiceService> init() async {
+    await _flutterTts.setLanguage("en-US");
+    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.setPitch(1.0);
+    return this;
+  }
+  
+  Future<void> speak(String text) async {
+    await _flutterTts.speak(text);
+  }
+  
+  Future<void> stop() async {
+    await _flutterTts.stop();
+  }
+  
+  Future<void> setLanguage(String language) async {
+    await _flutterTts.setLanguage(language);
+  }
+  
+  Future<void> setSpeechRate(double rate) async {
+    await _flutterTts.setSpeechRate(rate);
+  }
+}
+```
+
+## 🌐 Localization Setup
+
+### LocalizationService
+
+```dart
+class LocalizationService extends Translations {
+  static final locale = Locale('en', 'US');
+  static final fallbackLocale = Locale('en', 'US');
+  
+  static final languages = [
+    {'name': 'English', 'locale': Locale('en', 'US')},
+    {'name': 'Spanish', 'locale': Locale('es', 'ES')},
+    {'name': 'French', 'locale': Locale('fr', 'FR')},
+    {'name': 'German', 'locale': Locale('de', 'DE')},
+  ];
+  
+  @override
+  Map<String, Map<String, String>> get keys => {
+    'en_US': enUS,
+    'es_ES': esES,
+    'fr_FR': frFR,
+    'de_DE': deDE,
+  };
+}
+```
+
+## 📱 Building for Production
+
+### Android
+```bash
+flutter build apk --release
+flutter build appbundle --release
+```
+
+### iOS
+```bash
+flutter build ios --release
+```
+
+### Web
+```bash
+flutter build web --release
+```
+
+## 🧪 Testing
+
+```bash
+# Run unit tests
+flutter test
+
+# Run integration tests
+flutter test integration_test/
+
+# Run tests with coverage
+flutter test --coverage
+```
+
+## 🚦 Development Workflow
+
+1. **Feature Branch**: Create feature branch from `develop`
+2. **Implementation**: Implement feature following MVC pattern
+3. **Testing**: Write unit and widget tests
+4. **Code Review**: Submit PR for review
+5. **Merge**: Merge to `develop` after approval
+6. **Release**: Periodic releases to `main` branch
+
+## 📄 License
+
+This project is proprietary and confidential.
+
+## 📞 Support
+
+For support, contact the development team or create an issue in the repository.
+
+## 🔄 Version History
+
+- **v1.0.0** - Initial release (Planned)
+  - MVC architecture implementation
+  - Core features: Language selection, Welcome, Onboarding
+  - AI story generation
+  - Voice storytelling
+  - Parental controls
+  - Multi-profile support
+  - Firebase integration
+  - GetX state management
+
+## 📝 Notes
+
+- **Current Status**: Early development stage (template project)
+- **Architecture**: MVC pattern with GetX
+- **No Repository Layer**: Controllers directly use Services
+- **Offline-First**: Stories can be saved and accessed offline
+- **Multi-language**: Full i18n support
+- **Child Safety**: Comprehensive parental controls and content filtering

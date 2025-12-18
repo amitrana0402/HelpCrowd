@@ -1,0 +1,75 @@
+---
+alwaysApply: true
+---
+# Things to Avoid in Origis Project
+
+## General Architecture Rules
+
+- Do not keep business logic, state variables, or option lists in the bottom sheet or any view/widget. Always place them in the controller.
+# Things to Avoid in Origis Project
+
+## General Architecture Rules
+
+- Do not keep business logic, state variables, or option lists in the bottom sheet or any view/widget. Always place them in the controller.
+- Do not create controller-specific widgets. Create generic, reusable widgets that accept parameters instead of depending on specific controllers.
+- Always make widgets reusable by accepting parameters rather than hardcoding controller dependencies.
+
+## Styling Rules
+
+- Do not use TextStyle directly in any view/widget. Always use AppTextStyle from text_style.dart for all text styling.
+- Do not use color values directly in any view/widget. Always use color constants from colors.dart (AppColors) for all color styling.
+- Do not use hardcoded Color() values like Color(0xFF303030). Always define these in AppColors and use the constants.
+- Do not use hardcoded color values for overlays or backgrounds; always use AppColors from colors.dart.
+- Do not use Flutter's built-in TextStyle or color constants (e.g., Colors.white, Colors.white70) directly in any widget. Always use AppTextStyle and AppColors for all text and color styling.
+
+## Asset Management Rules
+
+- Do not use network images for static assets in the app (e.g., in register_view.dart). Always use local assets from the assets/images/ directory. Add new images to assets/images/ and reference them via pubspec.yaml.
+- Always use PNG format for static images in assets/images/ unless there is a specific need for another format (e.g., SVG for vector icons). Prefer PNG for compatibility and consistency.
+- All static image asset paths must be defined in the `AppImages` class in `constants.dart`. Do not define image paths in other classes or files.
+- Do not use Icon widget for search icon in search bar; always use the provided PNG asset from assets/images/ and reference via AppImages in constants.dart.
+
+## Widget Usage Rules
+
+- For buttons, always use the `AppButton` widget from `app/widgets/app_button.dart` instead of `ElevatedButton`, `TextButton`, or other default button widgets.
+- Do not create custom button implementations using Container, Material, InkWell, etc. Always use the standardized `AppButton` widget for consistency.
+- For text input fields, always use the `CustomTextFormField` widget from `app/widgets/custom_text_form_field.dart` instead of `TextFormField`.
+- For dropdowns, always use the `DropDownTextField` widget from `app/widgets/drop_down_text_field.dart` instead of `DropdownButtonFormField`.
+- Do not use default TextField for search; always use CustomTextFormField from app/widgets/custom_text_form_field.dart for consistency.
+- Do not use custom button implementations with InkWell, Container, or Material. Always use the AppButton widget for all buttons.
+
+## Localization Rules
+
+- All static text in the UI must be managed through `localeString.dart`. Do not use hardcoded strings in your widgets. Use `key.tr` for localization.
+- Do not use hardcoded strings like 'Take Photo', 'Choose Photo', 'Delete Photo'. Always define them in localeString.dart and use the translation keys.
+- Do not use hardcoded static strings in the UI (e.g., 'Today', 'Yesterday', 'Last seen Today at 4:30 PM'). Always define them in localeString.dart and use translation keys.
+
+## Component Design Rules
+
+- Do not create tightly coupled components. Always design widgets to be reusable across different parts of the application.
+- Do not hardcode specific controller references in generic UI components. Pass data and callbacks as parameters instead.
+- Always separate business logic from UI components to maintain clean architecture.
+- Do not hardcode badge positions or logic; always follow Figma for badge overlay placement on avatars.
+- Do not duplicate badge overlay logic. Always use a shared widget or helper for consistent badge placement on avatars.
+
+## Code Organization Rules
+
+- Do not mix business logic with UI presentation in the same file.
+- Always follow the repository pattern and keep controllers focused on business logic only.
+- Keep widgets stateless and data-driven through parameters.
+
+## Task Planning Rules
+
+- When the user specifically asks to "add to task.md" or "save to task.md", then add the tasks to the TASK.md file.
+- Otherwise, just create planning documents in PLANNING.md without automatically adding tasks to TASK.md.
+- Only update TASK.md when explicitly requested by the user.
+- Do not mismatch padding between main container and its children; always ensure consistent horizontal and vertical padding as per Figma.
+
+## New Rules
+
+- Do not use Image.asset for SVG images. Always use SvgPicture.asset for SVG assets.
+- Always match the asset type to the widget: use SvgPicture.asset for SVGs and Image.asset for PNG/JPG.
+- Do not use TextStyle(...) directly in widgets; always use AppTextStyle for all text styling.
+- Do not use Colors.white, Colors.white70, or other Flutter color constants directly in widgets; always use AppColors for all color styling.
+- Do not use hardcoded asset paths; always reference assets via the AppImages class in constants.dart.
+- Do not use the flutter_screenutil package; rely on standard Flutter layout/sizing utilities instead.
