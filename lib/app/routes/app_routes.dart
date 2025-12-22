@@ -13,7 +13,15 @@ abstract class Routes {
   static const SIGNUP_STEP4 = _Paths.SIGNUP_STEP4;
   static const SIGNUP_STEP5 = _Paths.SIGNUP_STEP5;
   static const SIGNUP_STEP6 = _Paths.SIGNUP_STEP6;
+  static const APPEAL_PREFERENCES = _Paths.APPEAL_PREFERENCES;
+  static const DONATION_PREFERENCES = _Paths.DONATION_PREFERENCES;
+  static const SPECIFY_AMOUNT = _Paths.SPECIFY_AMOUNT;
+  static const MAIN_NAVIGATION = _Paths.MAIN_NAVIGATION;
   static const HOME = _Paths.HOME;
+  static const TRANSACTIONS = _Paths.TRANSACTIONS;
+  static const PROFILE = _Paths.PROFILE;
+  static const NOTIFICATIONS = _Paths.NOTIFICATIONS;
+  static const SETTINGS = _Paths.SETTINGS;
 }
 
 abstract class _Paths {
@@ -29,5 +37,13 @@ abstract class _Paths {
   static const SIGNUP_STEP4 = '/signup/step4';
   static const SIGNUP_STEP5 = '/signup/step5';
   static const SIGNUP_STEP6 = '/signup/step6';
+  static const APPEAL_PREFERENCES = '/appeal-preferences';
+  static const DONATION_PREFERENCES = '/donation-preferences';
+  static const SPECIFY_AMOUNT = '/specify-amount';
+  static const MAIN_NAVIGATION = '/main-navigation';
   static const HOME = '/home';
+  static const TRANSACTIONS = '/transactions';
+  static const PROFILE = '/profile';
+  static const NOTIFICATIONS = '/notifications';
+  static const SETTINGS = '/settings';
 }

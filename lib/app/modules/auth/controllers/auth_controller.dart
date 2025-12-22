@@ -96,4 +96,3 @@ class AuthController extends GetxController {
     Get.toNamed(Routes.SIGNUP);
   }
 }
-

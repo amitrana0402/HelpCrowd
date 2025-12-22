@@ -9,7 +9,7 @@ class LandingController extends GetxController {
 
   void onCreateAccountTap() {
     // Navigate to signup (future implementation)
-    // Get.toNamed(Routes.SIGNUP);
+    Get.toNamed(Routes.SIGNUP);
   }
 
   void onLoginTap() {

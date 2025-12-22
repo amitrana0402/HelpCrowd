@@ -16,6 +16,22 @@ import '../modules/signup/views/signup_step3_view.dart';
 import '../modules/signup/views/signup_step4_view.dart';
 import '../modules/signup/views/signup_step5_view.dart';
 import '../modules/signup/views/signup_step6_view.dart';
+import '../modules/appeal_preferences/bindings/appeal_preferences_binding.dart';
+import '../modules/appeal_preferences/views/appeal_preferences_view.dart';
+import '../modules/donation_preferences/bindings/donation_preferences_binding.dart';
+import '../modules/donation_preferences/views/donation_preferences_view.dart';
+import '../modules/specify_amount/bindings/specify_amount_binding.dart';
+import '../modules/specify_amount/views/specify_amount_view.dart';
+import '../modules/main_navigation/bindings/main_navigation_binding.dart';
+import '../modules/main_navigation/views/main_navigation_view.dart';
+import '../modules/transactions/bindings/transactions_binding.dart';
+import '../modules/transactions/views/transactions_view.dart';
+import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_view.dart';
+import '../modules/notifications/bindings/notifications_binding.dart';
+import '../modules/notifications/views/notifications_view.dart';
+import '../modules/settings/bindings/settings_binding.dart';
+import '../modules/settings/views/settings_view.dart';
 
 part 'app_routes.dart';
 
@@ -83,9 +99,49 @@ class AppPages {
       binding: SignupBinding(),
     ),
     GetPage(
+      name: _Paths.APPEAL_PREFERENCES,
+      page: () => const AppealPreferencesView(),
+      binding: AppealPreferencesBinding(),
+    ),
+    GetPage(
+      name: _Paths.DONATION_PREFERENCES,
+      page: () => const DonationPreferencesView(),
+      binding: DonationPreferencesBinding(),
+    ),
+    GetPage(
+      name: _Paths.SPECIFY_AMOUNT,
+      page: () => const SpecifyAmountView(),
+      binding: SpecifyAmountBinding(),
+    ),
+    GetPage(
+      name: _Paths.MAIN_NAVIGATION,
+      page: () => const MainNavigationView(),
+      binding: MainNavigationBinding(),
+    ),
+    GetPage(
       name: _Paths.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+      name: _Paths.TRANSACTIONS,
+      page: () => const TransactionsView(),
+      binding: TransactionsBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATIONS,
+      page: () => const NotificationsView(),
+      binding: NotificationsBinding(),
+    ),
+    GetPage(
+      name: _Paths.SETTINGS,
+      page: () => const SettingsView(),
+      binding: SettingsBinding(),
     ),
   ];
 }

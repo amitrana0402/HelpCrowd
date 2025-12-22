@@ -304,10 +304,20 @@ class SignupController extends GetxController {
   void _handleStep6Continue() {
     validateStep6();
     if (isStep6Valid.value) {
-      // TODO: Navigate to next step when implemented
-      // currentStep.value = 7;
-      // Get.toNamed(Routes.SIGNUP_STEP7);
+      // Navigate to Appeal Preferences (step 7)
+      currentStep.value = 7;
+      Get.toNamed(Routes.APPEAL_PREFERENCES);
     }
+  }
+
+  // Update step when navigating to donation preferences
+  void updateStepTo8() {
+    currentStep.value = 8;
+  }
+
+  // Update step when navigating to specify amount
+  void updateStepTo9() {
+    currentStep.value = 9;
   }
 
   // Resend OTP

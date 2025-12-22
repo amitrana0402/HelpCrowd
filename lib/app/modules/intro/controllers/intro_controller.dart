@@ -30,17 +30,17 @@ class IntroController extends GetxController {
   }
 
   void onHelpChangeWorldTap() {
-    if (currentPage.value < 3) {
-      // Move to next page
-      pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      // Last page, navigate to landing
-      _markOnboardingCompleted();
-      Get.offAllNamed(Routes.LANDING);
-    }
+    // if (currentPage.value < 3) {
+    //   // Move to next page
+    //   pageController.nextPage(
+    //     duration: const Duration(milliseconds: 300),
+    //     curve: Curves.easeInOut,
+    //   );
+    // } else {
+    // Last page, navigate to landing
+    _markOnboardingCompleted();
+    Get.offAllNamed(Routes.LANDING);
+    // }
   }
 
   void onLoginTap() {

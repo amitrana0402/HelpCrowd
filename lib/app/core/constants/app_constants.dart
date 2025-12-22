@@ -21,5 +21,18 @@ class AppImages {
   static const String signUpPrefix = 'assets/images/sign_up_prefix.png';
   static const String splash = 'assets/images/splash.png';
   static const String introBottom = 'assets/images/intro_bottom.png';
-}
+  static const String checked = 'assets/images/checked.png';
 
+  // Navigation Icons
+  static const String navHome = 'assets/images/nav_home.png';
+  static const String navHomeSelected = 'assets/images/nav_home_selected.png';
+  static const String navTransaction = 'assets/images/nav_transaction.png';
+  static const String navTransactionSelected =
+      'assets/images/nav_transaction_selected.png';
+  static const String navNotification = 'assets/images/nav_notification.png';
+  static const String navNotificationSelected =
+      'assets/images/nav_notification_selected.png';
+  static const String navSetting = 'assets/images/nav_setting.png';
+  static const String navSettingSelected =
+      'assets/images/nav_setting_selected.png';
+}

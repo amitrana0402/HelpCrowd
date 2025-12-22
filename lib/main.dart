@@ -19,7 +19,7 @@ void main() async {
     GetMaterialApp(
       title: "HelpCrowd",
       theme: AppTheme.lightTheme,
-      initialRoute: Routes.SIGNUP_STEP1,
+      initialRoute: Routes.INTRO,
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),
