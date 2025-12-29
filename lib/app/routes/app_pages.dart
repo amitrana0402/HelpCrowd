@@ -36,6 +36,10 @@ import '../modules/news_detail/bindings/news_detail_binding.dart';
 import '../modules/news_detail/views/news_detail_view.dart';
 import '../modules/my_donations/bindings/my_donations_binding.dart';
 import '../modules/my_donations/views/my_donations_view.dart';
+import '../modules/favorite_appeals/bindings/favorite_appeals_binding.dart';
+import '../modules/favorite_appeals/views/favorite_appeals_view.dart';
+import '../modules/make_adhoc_donation/bindings/make_adhoc_donation_binding.dart';
+import '../modules/make_adhoc_donation/views/make_adhoc_donation_view.dart';
 
 part 'app_routes.dart';
 
@@ -156,6 +160,16 @@ class AppPages {
       name: _Paths.MY_DONATIONS,
       page: () => const MyDonationsView(),
       binding: MyDonationsBinding(),
+    ),
+    GetPage(
+      name: _Paths.FAVORITE_APPEALS,
+      page: () => const FavoriteAppealsView(),
+      binding: FavoriteAppealsBinding(),
+    ),
+    GetPage(
+      name: _Paths.MAKE_ADHOC_DONATION,
+      page: () => const MakeAdhocDonationView(),
+      binding: MakeAdhocDonationBinding(),
     ),
   ];
 }

@@ -24,6 +24,8 @@ abstract class Routes {
   static const SETTINGS = _Paths.SETTINGS;
   static const NEWS_DETAIL = _Paths.NEWS_DETAIL;
   static const MY_DONATIONS = _Paths.MY_DONATIONS;
+  static const FAVORITE_APPEALS = _Paths.FAVORITE_APPEALS;
+  static const MAKE_ADHOC_DONATION = _Paths.MAKE_ADHOC_DONATION;
 }
 
 abstract class _Paths {
@@ -50,4 +52,6 @@ abstract class _Paths {
   static const SETTINGS = '/settings';
   static const NEWS_DETAIL = '/news-detail';
   static const MY_DONATIONS = '/my-donations';
+  static const FAVORITE_APPEALS = '/favorite-appeals';
+  static const MAKE_ADHOC_DONATION = '/make-adhoc-donation';
 }

@@ -49,4 +49,7 @@ class AppImages {
   static const String donationHeader = 'assets/images/donation_header.png';
   static const String transactionHeader =
       'assets/images/transaction_header.png';
+
+  // Profile Icons
+  static const String heartDonation = 'assets/images/heart_donation.png';
 }
