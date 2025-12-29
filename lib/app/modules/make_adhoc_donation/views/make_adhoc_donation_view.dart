@@ -217,20 +217,12 @@ class MakeAdhocDonationView extends GetView<MakeAdhocDonationController> {
   }
 
   Widget _buildConfirmButton() {
-    return Container(
-      padding: const EdgeInsets.all(AppDimensions.paddingL),
-      decoration: BoxDecoration(
-        color: AppColors.backgroundLight,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: AppButton(
+          icon: SizedBox(width: 0),
+          suffixIcon: SizedBox(width: 0),
           text: 'Confirm donation',
           onPressed: controller.onConfirmDonation,
           variant: ButtonVariant.primary,
