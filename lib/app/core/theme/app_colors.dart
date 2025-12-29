@@ -48,6 +48,13 @@ class AppColors {
   static const Color warning = Color(0xFFFF9800);
   static const Color info = Color(0xFF2196F3);
 
+  // Transaction Colors
+  static const Color transactionRed = Color(0xFFE53935);
+  static const Color transactionGreen = Color(0xFF4CAF50);
+  static const Color transactionPurple = Color(0xFF9C27B0);
+  static const Color transactionBlue = Color(0xFF2196F3);
+  static const Color donationGreen = Color(0xFF90EE90);
+
   // Utility Colors
   static const Color transparent = Color(0x00000000);
 }

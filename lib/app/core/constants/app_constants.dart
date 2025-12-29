@@ -44,4 +44,9 @@ class AppImages {
 
   // Dialog Icons
   static const String controlDonation = 'assets/images/control_donation.png';
+
+  // Notification Icons
+  static const String donationHeader = 'assets/images/donation_header.png';
+  static const String transactionHeader =
+      'assets/images/transaction_header.png';
 }

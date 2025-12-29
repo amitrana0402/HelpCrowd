@@ -23,6 +23,7 @@ abstract class Routes {
   static const NOTIFICATIONS = _Paths.NOTIFICATIONS;
   static const SETTINGS = _Paths.SETTINGS;
   static const NEWS_DETAIL = _Paths.NEWS_DETAIL;
+  static const MY_DONATIONS = _Paths.MY_DONATIONS;
 }
 
 abstract class _Paths {
@@ -48,4 +49,5 @@ abstract class _Paths {
   static const NOTIFICATIONS = '/notifications';
   static const SETTINGS = '/settings';
   static const NEWS_DETAIL = '/news-detail';
+  static const MY_DONATIONS = '/my-donations';
 }
