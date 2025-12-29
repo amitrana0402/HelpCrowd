@@ -40,6 +40,14 @@ import '../modules/favorite_appeals/bindings/favorite_appeals_binding.dart';
 import '../modules/favorite_appeals/views/favorite_appeals_view.dart';
 import '../modules/make_adhoc_donation/bindings/make_adhoc_donation_binding.dart';
 import '../modules/make_adhoc_donation/views/make_adhoc_donation_view.dart';
+import '../modules/my_spending_account/bindings/my_spending_account_binding.dart';
+import '../modules/my_spending_account/views/my_spending_account_view.dart';
+import '../modules/profile_donation_preferences/bindings/profile_donation_preferences_binding.dart';
+import '../modules/profile_donation_preferences/views/profile_donation_preferences_view.dart';
+import '../modules/profile_appeal_preferences/bindings/profile_appeal_preferences_binding.dart';
+import '../modules/profile_appeal_preferences/views/profile_appeal_preferences_view.dart';
+import '../modules/profile_manage_donation_category/bindings/profile_manage_donation_category_binding.dart';
+import '../modules/profile_manage_donation_category/views/profile_manage_donation_category_view.dart';
 
 part 'app_routes.dart';
 
@@ -170,6 +178,26 @@ class AppPages {
       name: _Paths.MAKE_ADHOC_DONATION,
       page: () => const MakeAdhocDonationView(),
       binding: MakeAdhocDonationBinding(),
+    ),
+    GetPage(
+      name: _Paths.MY_SPENDING_ACCOUNT,
+      page: () => const MySpendingAccountView(),
+      binding: MySpendingAccountBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE_DONATION_PREFERENCES,
+      page: () => const ProfileDonationPreferencesView(),
+      binding: ProfileDonationPreferencesBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE_APPEAL_PREFERENCES,
+      page: () => const ProfileAppealPreferencesView(),
+      binding: ProfileAppealPreferencesBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE_MANAGE_DONATION_CATEGORY,
+      page: () => const ProfileManageDonationCategoryView(),
+      binding: ProfileManageDonationCategoryBinding(),
     ),
   ];
 }

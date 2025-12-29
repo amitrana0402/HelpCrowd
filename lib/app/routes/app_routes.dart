@@ -26,6 +26,12 @@ abstract class Routes {
   static const MY_DONATIONS = _Paths.MY_DONATIONS;
   static const FAVORITE_APPEALS = _Paths.FAVORITE_APPEALS;
   static const MAKE_ADHOC_DONATION = _Paths.MAKE_ADHOC_DONATION;
+  static const MY_SPENDING_ACCOUNT = _Paths.MY_SPENDING_ACCOUNT;
+  static const PROFILE_DONATION_PREFERENCES =
+      _Paths.PROFILE_DONATION_PREFERENCES;
+  static const PROFILE_APPEAL_PREFERENCES = _Paths.PROFILE_APPEAL_PREFERENCES;
+  static const PROFILE_MANAGE_DONATION_CATEGORY =
+      _Paths.PROFILE_MANAGE_DONATION_CATEGORY;
 }
 
 abstract class _Paths {
@@ -54,4 +60,9 @@ abstract class _Paths {
   static const MY_DONATIONS = '/my-donations';
   static const FAVORITE_APPEALS = '/favorite-appeals';
   static const MAKE_ADHOC_DONATION = '/make-adhoc-donation';
+  static const MY_SPENDING_ACCOUNT = '/my-spending-account';
+  static const PROFILE_DONATION_PREFERENCES = '/profile-donation-preferences';
+  static const PROFILE_APPEAL_PREFERENCES = '/profile-appeal-preferences';
+  static const PROFILE_MANAGE_DONATION_CATEGORY =
+      '/profile-manage-donation-category';
 }

@@ -22,7 +22,7 @@ class AppColors {
   static const Color textDark = Color(0xFF303030);
 
   // Background Colors
-  static const Color backgroundLight = Color(0xFFFFFFFF);
+  static const Color backgroundLight = Color(0xFFFAFAFA);
   static const Color backgroundDark = Color(0xFF1A1A1A);
 
   // Button Colors

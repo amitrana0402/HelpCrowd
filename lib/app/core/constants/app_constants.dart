@@ -52,4 +52,12 @@ class AppImages {
 
   // Profile Icons
   static const String heartDonation = 'assets/images/heart_donation.png';
+
+  // Settings Icons
+  static const String spending = 'assets/images/spending.png';
+  static const String donation = 'assets/images/donation.png';
+  static const String scheduledDonation =
+      'assets/images/scheduled_donation.png';
+  static const String donationReceipt = 'assets/images/donation_receipt.png';
+  static const String rewards = 'assets/images/rewards.png';
 }
