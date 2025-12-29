@@ -11,6 +11,7 @@ class AppImages {
 
   // Logo
   static const String topLogo = 'assets/images/top_logo.png';
+  static const String homeLogo = 'assets/images/home_logo.png';
   static const String introTop = 'assets/images/intro_top.png';
   static const String intro1 = 'assets/images/intro1.png';
   static const String intro2 = 'assets/images/intro2.png';
@@ -35,4 +36,12 @@ class AppImages {
   static const String navSetting = 'assets/images/nav_setting.png';
   static const String navSettingSelected =
       'assets/images/nav_setting_selected.png';
+
+  // Social Media Icons
+  static const String facebook = 'assets/images/facebook.png';
+  static const String instagram = 'assets/images/instagram.png';
+  static const String twitter = 'assets/images/twitter.png';
+
+  // Dialog Icons
+  static const String controlDonation = 'assets/images/control_donation.png';
 }

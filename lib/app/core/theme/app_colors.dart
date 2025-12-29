@@ -47,4 +47,7 @@ class AppColors {
   static const Color error = Color(0xFFE53935);
   static const Color warning = Color(0xFFFF9800);
   static const Color info = Color(0xFF2196F3);
+
+  // Utility Colors
+  static const Color transparent = Color(0x00000000);
 }

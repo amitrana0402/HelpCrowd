@@ -32,6 +32,8 @@ import '../modules/notifications/bindings/notifications_binding.dart';
 import '../modules/notifications/views/notifications_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
 import '../modules/settings/views/settings_view.dart';
+import '../modules/news_detail/bindings/news_detail_binding.dart';
+import '../modules/news_detail/views/news_detail_view.dart';
 
 part 'app_routes.dart';
 
@@ -142,6 +144,11 @@ class AppPages {
       name: _Paths.SETTINGS,
       page: () => const SettingsView(),
       binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: _Paths.NEWS_DETAIL,
+      page: () => const NewsDetailView(),
+      binding: NewsDetailBinding(),
     ),
   ];
 }

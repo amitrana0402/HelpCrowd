@@ -22,6 +22,7 @@ abstract class Routes {
   static const PROFILE = _Paths.PROFILE;
   static const NOTIFICATIONS = _Paths.NOTIFICATIONS;
   static const SETTINGS = _Paths.SETTINGS;
+  static const NEWS_DETAIL = _Paths.NEWS_DETAIL;
 }
 
 abstract class _Paths {
@@ -46,4 +47,5 @@ abstract class _Paths {
   static const PROFILE = '/profile';
   static const NOTIFICATIONS = '/notifications';
   static const SETTINGS = '/settings';
+  static const NEWS_DETAIL = '/news-detail';
 }
