@@ -132,34 +132,34 @@ class SignupController extends GetxController {
   }
 
   // Validate Step 4 (OTP)
-  void validateStep4() {
+  void validateStep5() {
     final otp = otpController.text.trim();
     if (otp.isEmpty) {
       otpError.value = 'Verification code is required';
-      isStep4Valid.value = false;
+      isStep5Valid.value = false;
     } else if (otp.length < 6) {
       otpError.value = 'Please enter a valid 6-digit code';
-      isStep4Valid.value = false;
+      isStep5Valid.value = false;
     } else {
       otpError.value = '';
-      isStep4Valid.value = true;
+      isStep5Valid.value = true;
     }
-  }
-
-  void _validateStep4() {
-    validateStep4();
-  }
-
-  // Validate Step 5 (Password)
-  void validateStep5() {
-    final passwordErrorText = Validators.password(passwordController.text);
-    passwordError.value = passwordErrorText ?? '';
-    isStep5Valid.value =
-        passwordErrorText == null && passwordController.text.isNotEmpty;
   }
 
   void _validateStep5() {
     validateStep5();
+  }
+
+  // Validate Step 5 (Password)
+  void validateStep4() {
+    final passwordErrorText = Validators.password(passwordController.text);
+    passwordError.value = passwordErrorText ?? '';
+    isStep4Valid.value =
+        passwordErrorText == null && passwordController.text.isNotEmpty;
+  }
+
+  void _validateStep4() {
+    validateStep4();
   }
 
   // Validate Step 6 (Username)

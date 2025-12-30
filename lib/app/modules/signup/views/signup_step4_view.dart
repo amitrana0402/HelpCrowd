@@ -1,9 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../widgets/buttons/app_button.dart';
+import '../../../widgets/inputs/custom_text_field.dart';
 import '../controllers/signup_controller.dart';
 import '../widgets/signup_base_scaffold.dart';
 
@@ -13,7 +15,7 @@ class SignupStep4View extends GetView<SignupController> {
   @override
   Widget build(BuildContext context) {
     return SignupBaseScaffold(
-      title: 'Enter Verification Code',
+      title: 'Set your password',
       body: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingL),
         child: Column(
@@ -26,24 +28,38 @@ class SignupStep4View extends GetView<SignupController> {
 
                   // Heading
                   Text(
-                    'Enter Verification Code',
+                    'Set your password',
                     style: AppTextStyles.h2,
                     textAlign: TextAlign.center,
                   ),
 
                   const SizedBox(height: AppDimensions.paddingXL),
 
-                  // OTP Input Field (Masked)
-                  _buildOtpInput(),
+                  // Password Input Field
+                  CustomTextField(
+                    hint: 'Password',
+                    controller: controller.passwordController,
+                    obscureText: true,
+                    textInputAction: TextInputAction.done,
+                    showBorder: false,
+                    textColor: AppColors.emailText,
+                    onEditingComplete: controller.onContinue,
+                    validator: (value) {
+                      controller.validateStep5();
+                      return controller.passwordError.value.isEmpty
+                          ? null
+                          : controller.passwordError.value;
+                    },
+                  ),
 
                   Obx(
-                    () => controller.otpError.value.isNotEmpty
+                    () => controller.passwordError.value.isNotEmpty
                         ? Padding(
                             padding: const EdgeInsets.only(
                               top: AppDimensions.paddingS,
                             ),
                             child: Text(
-                              controller.otpError.value,
+                              controller.passwordError.value,
                               textAlign: TextAlign.center,
                               style: AppTextStyles.caption.copyWith(
                                 color: AppColors.error,
@@ -55,38 +71,62 @@ class SignupStep4View extends GetView<SignupController> {
                 ],
               ),
             ),
-            // Resend Code Link
-            Obx(
-              () => Center(
-                child: GestureDetector(
-                  onTap:
-                      controller.canResendOtp.value &&
-                          !controller.isLoading.value
-                      ? controller.onResendOtp
-                      : null,
-                  child: Text(
-                    'Resend Code',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color:
-                          controller.canResendOtp.value &&
-                              !controller.isLoading.value
-                          ? AppColors.textDark
-                          : AppColors.textDark.withOpacity(0.5),
+            // Terms and Conditions Text
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+                children: [
+                  const TextSpan(
+                    text: "By tapping 'Create Account', I agree to The MSF's ",
+                  ),
+                  TextSpan(
+                    text: "T&C's",
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
                       decoration: TextDecoration.underline,
                     ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        // TODO: Navigate to Terms & Conditions
+                        Get.snackbar(
+                          'Terms & Conditions',
+                          'T&C page will be implemented soon.',
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      },
                   ),
-                ),
+                  const TextSpan(text: ' and '),
+                  TextSpan(
+                    text: 'Privacy Policy',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        // TODO: Navigate to Privacy Policy
+                        Get.snackbar(
+                          'Privacy Policy',
+                          'Privacy Policy page will be implemented soon.',
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      },
+                  ),
+                ],
               ),
             ),
 
             const SizedBox(height: AppDimensions.paddingL),
 
-            // Verify Button
+            // Create Account Button
             Obx(
               () => AppButton(
-                text: 'Verify',
+                text: 'Create Account',
                 onPressed:
-                    controller.isStep4Valid.value && !controller.isLoading.value
+                    controller.isStep5Valid.value && !controller.isLoading.value
                     ? controller.onContinue
                     : null,
                 variant: ButtonVariant.primary,
@@ -109,41 +149,6 @@ class SignupStep4View extends GetView<SignupController> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildOtpInput() {
-    return Container(
-      height: 60,
-      alignment: Alignment.center,
-      child: TextField(
-        controller: controller.otpController,
-        keyboardType: TextInputType.number,
-        textAlign: TextAlign.center,
-        maxLength: 6,
-        obscureText: true,
-        obscuringCharacter: '●',
-        style: AppTextStyles.h2.copyWith(
-          color: AppColors.emailText,
-          letterSpacing: 8,
-        ),
-        decoration: InputDecoration(
-          counterText: '',
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
-          hintText: '●●●●●●',
-          hintStyle: AppTextStyles.h2.copyWith(
-            color: AppColors.textSecondary.withOpacity(0.3),
-            letterSpacing: 8,
-          ),
-        ),
-        onChanged: (value) {
-          controller.validateStep4();
-        },
       ),
     );
   }
