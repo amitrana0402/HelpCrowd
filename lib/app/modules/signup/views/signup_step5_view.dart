@@ -14,6 +14,7 @@ class SignupStep5View extends GetView<SignupController> {
   Widget build(BuildContext context) {
     return SignupBaseScaffold(
       title: 'Enter Verification Code',
+      step: SignupController.step5,
       body: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingL),
         child: Column(
@@ -86,8 +87,8 @@ class SignupStep5View extends GetView<SignupController> {
               () => AppButton(
                 text: 'Verify',
                 onPressed:
-                    controller.isStep4Valid.value && !controller.isLoading.value
-                    ? controller.onContinue
+                    controller.isStep5Valid.value && !controller.isLoading.value
+                    ? () => controller.onContinue(SignupController.step5)
                     : null,
                 variant: ButtonVariant.primary,
                 isLoading: controller.isLoading.value,
@@ -142,7 +143,7 @@ class SignupStep5View extends GetView<SignupController> {
           ),
         ),
         onChanged: (value) {
-          controller.validateStep4();
+          controller.validateStep5();
         },
       ),
     );

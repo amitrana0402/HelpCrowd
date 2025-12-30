@@ -15,6 +15,7 @@ class SignupStep3View extends GetView<SignupController> {
   Widget build(BuildContext context) {
     return SignupBaseScaffold(
       title: "What's your mobile number?",
+      step: SignupController.step3,
       body: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingL),
         child: Column(
@@ -65,7 +66,8 @@ class SignupStep3View extends GetView<SignupController> {
                           textInputAction: TextInputAction.done,
                           showBorder: false,
                           textColor: AppColors.emailText,
-                          onEditingComplete: controller.onContinue,
+                          onEditingComplete: () =>
+                              controller.onContinue(SignupController.step3),
                           validator: (value) {
                             controller.validateStep3();
                             return controller.mobileNumberError.value.isEmpty
@@ -111,7 +113,7 @@ class SignupStep3View extends GetView<SignupController> {
                 text: 'Continue',
                 onPressed:
                     controller.isStep3Valid.value && !controller.isLoading.value
-                    ? controller.onContinue
+                    ? () => controller.onContinue(SignupController.step3)
                     : null,
                 variant: ButtonVariant.primary,
                 isLoading: controller.isLoading.value,

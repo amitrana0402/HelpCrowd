@@ -16,6 +16,7 @@ class SignupStep4View extends GetView<SignupController> {
   Widget build(BuildContext context) {
     return SignupBaseScaffold(
       title: 'Set your password',
+      step: SignupController.step4,
       body: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingL),
         child: Column(
@@ -43,9 +44,10 @@ class SignupStep4View extends GetView<SignupController> {
                     textInputAction: TextInputAction.done,
                     showBorder: false,
                     textColor: AppColors.emailText,
-                    onEditingComplete: controller.onContinue,
+                    onEditingComplete: () =>
+                        controller.onContinue(SignupController.step4),
                     validator: (value) {
-                      controller.validateStep5();
+                      controller.validateStep4();
                       return controller.passwordError.value.isEmpty
                           ? null
                           : controller.passwordError.value;
@@ -126,8 +128,8 @@ class SignupStep4View extends GetView<SignupController> {
               () => AppButton(
                 text: 'Create Account',
                 onPressed:
-                    controller.isStep5Valid.value && !controller.isLoading.value
-                    ? controller.onContinue
+                    controller.isStep4Valid.value && !controller.isLoading.value
+                    ? () => controller.onContinue(SignupController.step4)
                     : null,
                 variant: ButtonVariant.primary,
                 isLoading: controller.isLoading.value,

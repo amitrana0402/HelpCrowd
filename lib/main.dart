@@ -4,10 +4,15 @@ import 'package:get_storage/get_storage.dart';
 import 'app/core/theme/app_theme.dart';
 import 'app/routes/app_pages.dart' show AppPages, Routes;
 import 'app/core/constants/storage_keys.dart';
+import 'app/services/api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+
+  // Initialize API Service
+  Get.put(ApiService(), permanent: true);
+  await Get.find<ApiService>().init();
 
   // Determine initial route based on onboarding status
   final storage = GetStorage();

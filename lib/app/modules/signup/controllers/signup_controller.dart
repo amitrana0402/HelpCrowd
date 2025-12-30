@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/constants/api_constants.dart';
 import '../../../routes/app_pages.dart';
+import '../../../services/api_service.dart';
+import '../../../data/models/signup_request_model.dart';
+import '../../../data/models/signup_response_model.dart';
 
 class SignupController extends GetxController {
   // Total number of steps in signup flow
   static const int totalSteps = 11;
 
-  // Current step (1-based)
-  final currentStep = 1.obs;
+  // Static step values
+  static const int step1 = 1;
+  static const int step2 = 2;
+  static const int step3 = 3;
+  static const int step4 = 4;
+  static const int step5 = 5;
+  static const int step6 = 6;
+  static const int step7 = 7;
+  static const int step8 = 8;
+  static const int step9 = 9;
 
   // Step 1: Name Fields
   final firstNameController = TextEditingController();
@@ -48,15 +60,19 @@ class SignupController extends GetxController {
   // Loading State
   final isLoading = false.obs;
 
+  // API Service
+  late final ApiService _apiService;
+
   @override
   void onInit() {
     super.onInit();
+    _apiService = Get.find<ApiService>();
     firstNameController.addListener(_validateStep1);
     lastNameController.addListener(_validateStep1);
     emailController.addListener(_validateStep2);
     mobileNumberController.addListener(_validateStep3);
-    otpController.addListener(_validateStep4);
-    passwordController.addListener(_validateStep5);
+    otpController.addListener(_validateStep5);
+    passwordController.addListener(_validateStep4);
     usernameController.addListener(_validateStep6);
   }
 
@@ -71,9 +87,6 @@ class SignupController extends GetxController {
     usernameController.dispose();
     super.onClose();
   }
-
-  // Get progress percentage (0.0 to 1.0)
-  double get progress => currentStep.value / totalSteps;
 
   // Validate Step 1 (First Name and Last Name)
   void validateStep1() {
@@ -186,24 +199,24 @@ class SignupController extends GetxController {
   }
 
   // Navigate to next step
-  void onContinue() {
-    switch (currentStep.value) {
-      case 1:
+  void onContinue(int step) {
+    switch (step) {
+      case step1:
         _handleStep1Continue();
         break;
-      case 2:
+      case step2:
         _handleStep2Continue();
         break;
-      case 3:
+      case step3:
         _handleStep3Continue();
         break;
-      case 4:
+      case step4:
         _handleStep4Continue();
         break;
-      case 5:
+      case step5:
         _handleStep5Continue();
         break;
-      case 6:
+      case step6:
         _handleStep6Continue();
         break;
       // TODO: Add handlers for other steps (7-11)
@@ -215,7 +228,6 @@ class SignupController extends GetxController {
   void _handleStep1Continue() {
     validateStep1();
     if (isStep1Valid.value) {
-      currentStep.value = 2;
       Get.toNamed(Routes.SIGNUP_STEP2);
     }
   }
@@ -223,33 +235,15 @@ class SignupController extends GetxController {
   void _handleStep2Continue() {
     validateStep2();
     if (isStep2Valid.value) {
-      currentStep.value = 3;
       Get.toNamed(Routes.SIGNUP_STEP3);
     }
   }
 
-  Future<void> _handleStep3Continue() async {
+  void _handleStep3Continue() {
     validateStep3();
-    if (!isStep3Valid.value) {
-      return;
-    }
-
-    isLoading.value = true;
-    try {
-      // TODO: Implement actual OTP sending API call
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
-      otpSent.value = true;
-      // Navigate to step 4 after OTP is sent
-      currentStep.value = 4;
+    if (isStep3Valid.value) {
+      // Navigate to step 4 (password step)
       Get.toNamed(Routes.SIGNUP_STEP4);
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to send OTP. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } finally {
-      isLoading.value = false;
     }
   }
 
@@ -259,17 +253,102 @@ class SignupController extends GetxController {
       return;
     }
 
+    // Collect data from steps 1-3
+    final signupData = SignupRequestModel(
+      firstname: firstNameController.text.trim(),
+      lastname: lastNameController.text.trim(),
+      email: emailController.text.trim(),
+      mobile: '${countryCode.value}${mobileNumberController.text.trim()}',
+      password: passwordController.text,
+      passwordConfirmation: passwordController.text,
+    );
+
     isLoading.value = true;
+
+    // Clear previous errors
+    firstNameError.value = '';
+    lastNameError.value = '';
+    emailError.value = '';
+    mobileNumberError.value = '';
+    passwordError.value = '';
+
     try {
-      // TODO: Implement actual OTP verification API call
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
-      // Navigate to step 5 after verification
-      currentStep.value = 5;
-      Get.toNamed(Routes.SIGNUP_STEP5);
+      // Call signup API
+      final response = await _apiService.post(
+        ApiConstants.signup,
+        signupData.toJson(),
+        includeCsrf: true,
+      );
+
+      // Parse response
+      final signupResponse = SignupResponseModel.fromJson(response);
+
+      if (signupResponse.success) {
+        // Show success message
+        Get.snackbar(
+          'Success',
+          signupResponse.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        // Navigate to step 5 (OTP verification) after successful signup
+        Get.toNamed(Routes.SIGNUP_STEP5);
+      } else {
+        // Handle unexpected response
+        Get.snackbar(
+          'Error',
+          signupResponse.message.isNotEmpty
+              ? signupResponse.message
+              : 'Failed to create account. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } on ApiException catch (e) {
+      // Handle API errors
+      if (e.errorModel != null) {
+        final errorModel = e.errorModel!;
+
+        // Set field-specific errors
+        final firstNameErr = errorModel.getFieldError('firstname');
+        if (firstNameErr != null) {
+          firstNameError.value = firstNameErr;
+        }
+
+        final lastNameErr = errorModel.getFieldError('lastname');
+        if (lastNameErr != null) {
+          lastNameError.value = lastNameErr;
+        }
+
+        final emailErr = errorModel.getFieldError('email');
+        if (emailErr != null) {
+          emailError.value = emailErr;
+        }
+
+        final mobileErr = errorModel.getFieldError('mobile');
+        if (mobileErr != null) {
+          mobileNumberError.value = mobileErr;
+        }
+
+        final passwordErr = errorModel.getFieldError('password');
+        if (passwordErr != null) {
+          passwordError.value = passwordErr;
+        }
+
+        // Show error message
+        Get.snackbar(
+          'Validation Error',
+          errorModel.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } else {
+        // Generic error
+        Get.snackbar('Error', e.message, snackPosition: SnackPosition.BOTTOM);
+      }
     } catch (e) {
+      // Handle unexpected errors
       Get.snackbar(
         'Error',
-        'Invalid verification code. Please try again.',
+        'An unexpected error occurred. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
@@ -285,15 +364,14 @@ class SignupController extends GetxController {
 
     isLoading.value = true;
     try {
-      // TODO: Implement actual account creation API call
+      // TODO: Implement actual OTP verification API call
       await Future.delayed(const Duration(seconds: 1)); // Simulate API call
-      // Navigate to step 6 after account creation
-      currentStep.value = 6;
+      // Navigate to step 6 after OTP verification
       Get.toNamed(Routes.SIGNUP_STEP6);
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Failed to create account. Please try again.',
+        'Invalid verification code. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
@@ -305,19 +383,18 @@ class SignupController extends GetxController {
     validateStep6();
     if (isStep6Valid.value) {
       // Navigate to Appeal Preferences (step 7)
-      currentStep.value = 7;
       Get.toNamed(Routes.APPEAL_PREFERENCES);
     }
   }
 
   // Update step when navigating to donation preferences
   void updateStepTo8() {
-    currentStep.value = 8;
+    Get.toNamed(Routes.DONATION_PREFERENCES);
   }
 
   // Update step when navigating to specify amount
   void updateStepTo9() {
-    currentStep.value = 9;
+    Get.toNamed(Routes.SPECIFY_AMOUNT);
   }
 
   // Resend OTP
@@ -351,20 +428,20 @@ class SignupController extends GetxController {
     }
   }
 
-  // Get current step validation status
-  bool get isCurrentStepValid {
-    switch (currentStep.value) {
-      case 1:
+  // Get step validation status
+  bool isStepValid(int step) {
+    switch (step) {
+      case step1:
         return isStep1Valid.value;
-      case 2:
+      case step2:
         return isStep2Valid.value;
-      case 3:
+      case step3:
         return isStep3Valid.value;
-      case 4:
+      case step4:
         return isStep4Valid.value;
-      case 5:
+      case step5:
         return isStep5Valid.value;
-      case 6:
+      case step6:
         return isStep6Valid.value;
       default:
         return false;
@@ -373,11 +450,6 @@ class SignupController extends GetxController {
 
   // Navigate to previous step
   void onBack() {
-    if (currentStep.value > 1) {
-      currentStep.value--;
-      Get.back();
-    } else {
-      Get.back();
-    }
+    Get.back();
   }
 }

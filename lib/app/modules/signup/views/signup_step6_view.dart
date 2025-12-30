@@ -15,6 +15,7 @@ class SignupStep6View extends GetView<SignupController> {
   Widget build(BuildContext context) {
     return SignupBaseScaffold(
       title: 'Set Username',
+      step: SignupController.step6,
       body: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingL),
         child: Column(
@@ -54,7 +55,8 @@ class SignupStep6View extends GetView<SignupController> {
                     textInputAction: TextInputAction.done,
                     showBorder: false,
                     textColor: AppColors.emailText,
-                    onEditingComplete: controller.onContinue,
+                    onEditingComplete: () =>
+                        controller.onContinue(SignupController.step6),
                     validator: (value) {
                       controller.validateStep6();
                       return controller.usernameError.value.isEmpty
@@ -99,7 +101,7 @@ class SignupStep6View extends GetView<SignupController> {
                 text: 'Continue',
                 onPressed:
                     controller.isStep6Valid.value && !controller.isLoading.value
-                    ? controller.onContinue
+                    ? () => controller.onContinue(SignupController.step6)
                     : null,
                 variant: ButtonVariant.primary,
                 isLoading: controller.isLoading.value,
