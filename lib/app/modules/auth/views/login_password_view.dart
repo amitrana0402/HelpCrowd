@@ -70,19 +70,22 @@ class LoginPasswordView extends GetView<AuthController> {
                       },
                     ),
 
-                    if (controller.passwordError.value.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: AppDimensions.paddingS,
-                        ),
-                        child: Text(
-                          controller.passwordError.value,
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.error,
-                          ),
-                        ),
-                      ),
+                    Obx(
+                      () => controller.passwordError.value.isNotEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.only(
+                                top: AppDimensions.paddingS,
+                              ),
+                              child: Text(
+                                controller.passwordError.value,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyles.caption.copyWith(
+                                  color: AppColors.error,
+                                ),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
                   ],
                 ),
               ),

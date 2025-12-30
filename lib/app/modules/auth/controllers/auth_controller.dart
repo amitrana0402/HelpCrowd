@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/constants/api_constants.dart';
 import '../../../routes/app_pages.dart';
+import '../../../services/api_service.dart';
+import '../../../data/models/login_request_model.dart';
+import '../../../data/models/login_response_model.dart';
 
 class AuthController extends GetxController {
   // Email Screen State
@@ -17,9 +21,13 @@ class AuthController extends GetxController {
   // Loading State
   final isLoading = false.obs;
 
+  // API Service
+  late final ApiService _apiService;
+
   @override
   void onInit() {
     super.onInit();
+    _apiService = Get.find<ApiService>();
     emailController.addListener(_validateEmail);
     passwordController.addListener(_validatePassword);
   }
@@ -65,17 +73,84 @@ class AuthController extends GetxController {
     }
 
     isLoading.value = true;
+    passwordError.value = '';
 
     try {
-      // TODO: Implement actual login API call
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
+      // Create login request
+      final loginRequest = LoginRequestModel(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
 
-      // Navigate to home after successful login
-      Get.offAllNamed(Routes.HOME);
+      // Call login API
+      final response = await _apiService.post(
+        ApiConstants.login,
+        loginRequest.toJson(),
+        includeCsrf: true,
+      );
+
+      // Parse response
+      final loginResponse = LoginResponseModel.fromJson(response);
+
+      if (loginResponse.success) {
+        // Login successful
+        Get.snackbar(
+          'Success',
+          loginResponse.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        // TODO: Save user data and token to storage
+        // if (loginResponse.data?.token != null) {
+        //   await storageService.saveToken(loginResponse.data!.token!);
+        // }
+        // if (loginResponse.data?.user != null) {
+        //   await storageService.saveUser(loginResponse.data!.user!);
+        // }
+
+        // Navigate to home after successful login
+        Get.offAllNamed(Routes.HOME);
+      } else {
+        // Login failed
+        passwordError.value = loginResponse.message;
+        Get.snackbar(
+          'Error',
+          loginResponse.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } on ApiException catch (e) {
+      // Handle API errors
+      if (e.errorModel != null) {
+        final errorModel = e.errorModel!;
+
+        // Set field-specific errors
+        final emailErr = errorModel.getFieldError('email');
+        if (emailErr != null) {
+          emailError.value = emailErr;
+        }
+
+        final passwordErr = errorModel.getFieldError('password');
+        if (passwordErr != null) {
+          passwordError.value = passwordErr;
+        }
+
+        // Show error message
+        Get.snackbar(
+          'Error',
+          errorModel.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } else {
+        // Generic error
+        passwordError.value = e.message;
+        Get.snackbar('Error', e.message, snackPosition: SnackPosition.BOTTOM);
+      }
     } catch (e) {
+      // Handle unexpected errors
       Get.snackbar(
         'Error',
-        'Login failed. Please try again.',
+        'An unexpected error occurred. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {

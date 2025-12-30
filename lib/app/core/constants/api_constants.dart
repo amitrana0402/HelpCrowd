@@ -6,5 +6,8 @@ class ApiConstants {
 
   // Auth Endpoints
   static const String signup = '/auth/signup';
+  static const String verifyOtp = '/auth/verify-otp';
+  static const String createAccount = '/auth/create-account';
+  static const String login = '/auth/login';
 }
 

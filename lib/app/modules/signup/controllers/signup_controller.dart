@@ -6,6 +6,10 @@ import '../../../routes/app_pages.dart';
 import '../../../services/api_service.dart';
 import '../../../data/models/signup_request_model.dart';
 import '../../../data/models/signup_response_model.dart';
+import '../../../data/models/verify_otp_request_model.dart';
+import '../../../data/models/verify_otp_response_model.dart';
+import '../../../data/models/create_account_request_model.dart';
+import '../../../data/models/create_account_response_model.dart';
 
 class SignupController extends GetxController {
   // Total number of steps in signup flow
@@ -363,15 +367,103 @@ class SignupController extends GetxController {
     }
 
     isLoading.value = true;
+    otpError.value = '';
+
     try {
-      // TODO: Implement actual OTP verification API call
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
-      // Navigate to step 6 after OTP verification
-      Get.toNamed(Routes.SIGNUP_STEP6);
+      // Step 1: Verify OTP
+      final verifyOtpRequest = VerifyOtpRequestModel(
+        email: emailController.text.trim(),
+        otp: otpController.text.trim(),
+      );
+
+      final verifyOtpResponse = await _apiService.post(
+        ApiConstants.verifyOtp,
+        verifyOtpRequest.toJson(),
+        includeCsrf: true,
+      );
+
+      final verifyOtpResult = VerifyOtpResponseModel.fromJson(
+        verifyOtpResponse,
+      );
+
+      if (!verifyOtpResult.success) {
+        // OTP verification failed
+        otpError.value = verifyOtpResult.message;
+        Get.snackbar(
+          'Error',
+          verifyOtpResult.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+
+      // Step 2: OTP verified successfully, now create account
+      final createAccountRequest = CreateAccountRequestModel(
+        email: emailController.text.trim(),
+      );
+
+      final createAccountResponse = await _apiService.post(
+        ApiConstants.createAccount,
+        createAccountRequest.toJson(),
+        includeCsrf: true,
+      );
+
+      final createAccountResult = CreateAccountResponseModel.fromJson(
+        createAccountResponse,
+      );
+
+      if (createAccountResult.success) {
+        // Account created successfully
+        Get.snackbar(
+          'Success',
+          createAccountResult.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        // TODO: Save user data and token to storage
+        // if (createAccountResult.data?.token != null) {
+        //   await storageService.saveToken(createAccountResult.data!.token!);
+        // }
+        // if (createAccountResult.data?.user != null) {
+        //   await storageService.saveUser(createAccountResult.data!.user!);
+        // }
+
+        // Navigate to step 6 after successful account creation
+        Get.toNamed(Routes.SIGNUP_STEP6);
+      } else {
+        // Account creation failed
+        Get.snackbar(
+          'Error',
+          createAccountResult.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } on ApiException catch (e) {
+      // Handle API errors
+      if (e.errorModel != null) {
+        final errorModel = e.errorModel!;
+
+        // Check if it's an OTP error
+        final otpErr = errorModel.getFieldError('otp');
+        if (otpErr != null) {
+          otpError.value = otpErr;
+        }
+
+        // Show error message
+        Get.snackbar(
+          'Error',
+          errorModel.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } else {
+        // Generic error
+        Get.snackbar('Error', e.message, snackPosition: SnackPosition.BOTTOM);
+      }
     } catch (e) {
+      // Handle unexpected errors
       Get.snackbar(
         'Error',
-        'Invalid verification code. Please try again.',
+        'An unexpected error occurred. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
