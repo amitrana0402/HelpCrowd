@@ -1,9 +1,13 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../data/models/settings_menu_item_model.dart';
 import '../../../routes/app_pages.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/constants/storage_keys.dart';
 
 class SettingsController extends GetxController {
+  final GetStorage _storage = GetStorage();
+
   final menuItems = <SettingsMenuItemModel>[
     // Account section
     SettingsMenuItemModel(
@@ -126,12 +130,23 @@ class SettingsController extends GetxController {
     }
   }
 
-  void onLogout() {
-    // TODO: Implement logout
-    Get.snackbar(
-      'Logout',
-      'Logout functionality will be implemented soon.',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+  Future<void> onLogout() async {
+    try {
+      // Clear authentication data from storage
+      await _storage.remove(StorageKeys.userToken);
+      await _storage.remove(StorageKeys.userEmail);
+      await _storage.remove(StorageKeys.isLoggedIn);
+      await _storage.remove(StorageKeys.userData);
+
+      // Navigate to login screen and clear navigation stack
+      Get.offAllNamed(Routes.LOGIN_EMAIL);
+    } catch (e) {
+      // Handle any errors during logout
+      Get.snackbar(
+        'Error',
+        'An error occurred during logout. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 }

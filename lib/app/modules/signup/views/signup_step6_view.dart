@@ -65,22 +65,90 @@ class SignupStep6View extends GetView<SignupController> {
                     },
                   ),
 
-                  Obx(
-                    () => controller.usernameError.value.isNotEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.only(
-                              top: AppDimensions.paddingS,
-                            ),
-                            child: Text(
-                              controller.usernameError.value,
-                              textAlign: TextAlign.center,
-                              style: AppTextStyles.caption.copyWith(
-                                color: AppColors.error,
+                  // Username availability status
+                  Obx(() {
+                    // Show loading indicator
+                    if (controller.isCheckingUsername.value) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          top: AppDimensions.paddingS,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.primaryBlue,
+                                ),
                               ),
                             ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
+                            const SizedBox(width: AppDimensions.paddingS),
+                            Text(
+                              'Checking availability...',
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.textDark,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    // Show success message when available
+                    if (controller.isUsernameAvailable.value == true &&
+                        controller
+                            .usernameAvailabilityMessage
+                            .value
+                            .isNotEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          top: AppDimensions.paddingS,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              size: 16,
+                              color: AppColors.success,
+                            ),
+                            const SizedBox(width: AppDimensions.paddingS),
+                            Expanded(
+                              child: Text(
+                                controller.usernameAvailabilityMessage.value,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyles.caption.copyWith(
+                                  color: AppColors.success,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    // Show error message
+                    if (controller.usernameError.value.isNotEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          top: AppDimensions.paddingS,
+                        ),
+                        child: Text(
+                          controller.usernameError.value,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.error,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return const SizedBox.shrink();
+                  }),
                 ],
               ),
             ),
@@ -100,7 +168,10 @@ class SignupStep6View extends GetView<SignupController> {
               () => AppButton(
                 text: 'Continue',
                 onPressed:
-                    controller.isStep6Valid.value && !controller.isLoading.value
+                    controller.isStep6Valid.value &&
+                        !controller.isLoading.value &&
+                        !controller.isCheckingUsername.value &&
+                        controller.isUsernameAvailable.value == true
                     ? () => controller.onContinue(SignupController.step6)
                     : null,
                 variant: ButtonVariant.primary,

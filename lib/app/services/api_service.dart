@@ -39,12 +39,18 @@ class ApiService extends GetxService {
   Map<String, dynamic> _getHeaders({
     Map<String, String>? additionalHeaders,
     bool includeCsrf = false,
+    String? authToken,
   }) {
     final headers = <String, dynamic>{};
 
     if (includeCsrf) {
       // TODO: Get CSRF token from storage if needed
       headers['X-CSRF-TOKEN'] = '';
+    }
+
+    // Add Authorization header if token is provided
+    if (authToken != null && authToken.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $authToken';
     }
 
     if (additionalHeaders != null) {
@@ -121,11 +127,13 @@ class ApiService extends GetxService {
     Map<String, dynamic> data, {
     Map<String, String>? additionalHeaders,
     bool includeCsrf = false,
+    String? authToken,
   }) async {
     try {
       final headers = _getHeaders(
         additionalHeaders: additionalHeaders,
         includeCsrf: includeCsrf,
+        authToken: authToken,
       );
 
       final response = await _dio.post(
@@ -150,9 +158,15 @@ class ApiService extends GetxService {
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     Map<String, String>? additionalHeaders,
+    String? authToken,
+    bool includeCsrf = false,
   }) async {
     try {
-      final headers = _getHeaders(additionalHeaders: additionalHeaders);
+      final headers = _getHeaders(
+        additionalHeaders: additionalHeaders,
+        authToken: authToken,
+        includeCsrf: includeCsrf,
+      );
 
       final response = await _dio.get(
         endpoint,
@@ -176,9 +190,13 @@ class ApiService extends GetxService {
     String endpoint,
     Map<String, dynamic> data, {
     Map<String, String>? additionalHeaders,
+    String? authToken,
   }) async {
     try {
-      final headers = _getHeaders(additionalHeaders: additionalHeaders);
+      final headers = _getHeaders(
+        additionalHeaders: additionalHeaders,
+        authToken: authToken,
+      );
 
       final response = await _dio.put(
         endpoint,
@@ -201,9 +219,13 @@ class ApiService extends GetxService {
   Future<dynamic> delete(
     String endpoint, {
     Map<String, String>? additionalHeaders,
+    String? authToken,
   }) async {
     try {
-      final headers = _getHeaders(additionalHeaders: additionalHeaders);
+      final headers = _getHeaders(
+        additionalHeaders: additionalHeaders,
+        authToken: authToken,
+      );
 
       final response = await _dio.delete(
         endpoint,

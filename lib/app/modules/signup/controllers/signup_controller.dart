@@ -1,13 +1,18 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/constants/api_constants.dart';
+import '../../../core/constants/storage_keys.dart';
 import '../../../routes/app_pages.dart';
 import '../../../services/api_service.dart';
 import '../../../data/models/signup_request_model.dart';
 import '../../../data/models/signup_response_model.dart';
 import '../../../data/models/verify_otp_request_model.dart';
 import '../../../data/models/verify_otp_response_model.dart';
+import '../../../data/models/resend_otp_request_model.dart';
+import '../../../data/models/resend_otp_response_model.dart';
 import '../../../data/models/create_account_request_model.dart';
 import '../../../data/models/create_account_response_model.dart';
 
@@ -60,12 +65,19 @@ class SignupController extends GetxController {
   final usernameController = TextEditingController();
   final usernameError = RxString('');
   final isStep6Valid = false.obs;
+  final isCheckingUsername = false.obs;
+  final isUsernameAvailable = Rx<bool?>(null);
+  final usernameAvailabilityMessage = RxString('');
+  Timer? _usernameCheckDebounce;
 
   // Loading State
   final isLoading = false.obs;
 
   // API Service
   late final ApiService _apiService;
+
+  // Storage
+  final GetStorage _storage = GetStorage();
 
   @override
   void onInit() {
@@ -77,11 +89,12 @@ class SignupController extends GetxController {
     mobileNumberController.addListener(_validateStep3);
     otpController.addListener(_validateStep5);
     passwordController.addListener(_validateStep4);
-    usernameController.addListener(_validateStep6);
+    usernameController.addListener(_onUsernameChanged);
   }
 
   @override
   void onClose() {
+    _usernameCheckDebounce?.cancel();
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
@@ -179,6 +192,91 @@ class SignupController extends GetxController {
     validateStep4();
   }
 
+  // Handle username text field changes with debounce
+  void _onUsernameChanged() {
+    // Cancel previous debounce timer
+    _usernameCheckDebounce?.cancel();
+
+    // Perform basic validation first
+    validateStep6();
+
+    final username = usernameController.text.trim();
+
+    // Reset availability state if username is empty or invalid
+    if (username.isEmpty ||
+        username.length < 3 ||
+        !RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(username)) {
+      isUsernameAvailable.value = null;
+      usernameAvailabilityMessage.value = '';
+      return;
+    }
+
+    // Set debounce timer to check availability after 500ms
+    _usernameCheckDebounce = Timer(const Duration(milliseconds: 500), () {
+      checkUsernameAvailability(username);
+    });
+  }
+
+  // Check username availability via API
+  Future<void> checkUsernameAvailability(String username) async {
+    if (username.isEmpty || username.length < 3) {
+      isUsernameAvailable.value = null;
+      usernameAvailabilityMessage.value = '';
+      return;
+    }
+
+    isCheckingUsername.value = true;
+    isUsernameAvailable.value = null;
+    usernameAvailabilityMessage.value = '';
+
+    try {
+      final response = await _apiService.get(
+        ApiConstants.checkUsername,
+        queryParameters: {'username': username},
+        includeCsrf: true,
+      );
+
+      final available = response['available'] ?? false;
+      final message = response['message'] ?? '';
+
+      isUsernameAvailable.value = available;
+      usernameAvailabilityMessage.value = message;
+
+      // Update validation based on availability
+      if (!available) {
+        usernameError.value = message.isNotEmpty
+            ? message
+            : 'This username is not available';
+        isStep6Valid.value = false;
+      } else {
+        // Clear error if username is available and format is valid
+        if (usernameError.value.isNotEmpty &&
+            !usernameError.value.contains('required') &&
+            !usernameError.value.contains('characters') &&
+            !usernameError.value.contains('letters')) {
+          usernameError.value = '';
+        }
+        // Re-validate to ensure format is still valid
+        validateStep6();
+      }
+    } on ApiException catch (e) {
+      // Handle API errors
+      isUsernameAvailable.value = false;
+      usernameAvailabilityMessage.value = e.message;
+      usernameError.value = e.message;
+      isStep6Valid.value = false;
+    } catch (e) {
+      // Handle unexpected errors
+      isUsernameAvailable.value = false;
+      usernameAvailabilityMessage.value =
+          'Failed to check username availability';
+      usernameError.value = 'Failed to check username availability';
+      isStep6Valid.value = false;
+    } finally {
+      isCheckingUsername.value = false;
+    }
+  }
+
   // Validate Step 6 (Username)
   void validateStep6() {
     final username = usernameController.text.trim();
@@ -193,13 +291,19 @@ class SignupController extends GetxController {
           'Username can only contain letters, numbers, and underscores';
       isStep6Valid.value = false;
     } else {
-      usernameError.value = '';
-      isStep6Valid.value = true;
+      // Only clear error if username is available (if checked)
+      if (isUsernameAvailable.value == true) {
+        usernameError.value = '';
+        isStep6Valid.value = true;
+      } else if (isUsernameAvailable.value == false) {
+        // Username is not available, keep error
+        isStep6Valid.value = false;
+      } else {
+        // Availability not checked yet, allow validation to pass for format
+        usernameError.value = '';
+        isStep6Valid.value = true;
+      }
     }
-  }
-
-  void _validateStep6() {
-    validateStep6();
   }
 
   // Navigate to next step
@@ -420,13 +524,26 @@ class SignupController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
         );
 
-        // TODO: Save user data and token to storage
-        // if (createAccountResult.data?.token != null) {
-        //   await storageService.saveToken(createAccountResult.data!.token!);
-        // }
-        // if (createAccountResult.data?.user != null) {
-        //   await storageService.saveUser(createAccountResult.data!.user!);
-        // }
+        // Save user data and token to storage
+        if (createAccountResult.data?.token != null) {
+          await _storage.write(
+            StorageKeys.userToken,
+            createAccountResult.data!.token!,
+          );
+          await _storage.write(StorageKeys.isLoggedIn, true);
+        }
+        if (createAccountResult.data?.user != null) {
+          await _storage.write(
+            StorageKeys.userData,
+            createAccountResult.data!.user!.toJson(),
+          );
+          if (createAccountResult.data!.user!.email != null) {
+            await _storage.write(
+              StorageKeys.userEmail,
+              createAccountResult.data!.user!.email!,
+            );
+          }
+        }
 
         // Navigate to step 6 after successful account creation
         Get.toNamed(Routes.SIGNUP_STEP6);
@@ -471,11 +588,125 @@ class SignupController extends GetxController {
     }
   }
 
-  void _handleStep6Continue() {
+  Future<void> _handleStep6Continue() async {
     validateStep6();
-    if (isStep6Valid.value) {
+
+    // Check username availability before proceeding if not already checked
+    final username = usernameController.text.trim();
+    if (username.isNotEmpty &&
+        username.length >= 3 &&
+        RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(username) &&
+        isUsernameAvailable.value == null) {
+      await checkUsernameAvailability(username);
+    }
+
+    // Only proceed if username is valid and available
+    if (!isStep6Valid.value || isUsernameAvailable.value != true) {
+      if (isUsernameAvailable.value == false) {
+        // Show error if username is not available
+        Get.snackbar(
+          'Username Not Available',
+          usernameAvailabilityMessage.value.isNotEmpty
+              ? usernameAvailabilityMessage.value
+              : 'This username is already taken. Please choose another.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+      return;
+    }
+
+    // Set username via API
+    isLoading.value = true;
+    usernameError.value = '';
+
+    try {
+      // Get user token from storage
+      final userToken = _storage.read<String>(StorageKeys.userToken);
+
+      if (userToken == null || userToken.isEmpty) {
+        Get.snackbar(
+          'Error',
+          'Authentication required. Please login again.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        isLoading.value = false;
+        return;
+      }
+
+      // Call set username API
+      final response = await _apiService.post(
+        ApiConstants.setUsername,
+        {'username': username},
+        includeCsrf: true,
+        authToken: userToken,
+      );
+
+      // Handle successful response (200)
+      final message = response['message'] ?? 'Username set successfully.';
+      final setUsername = response['username'] ?? username;
+
+      // Update user data in storage
+      final userDataJson = _storage.read<Map<String, dynamic>>(
+        StorageKeys.userData,
+      );
+      if (userDataJson != null) {
+        userDataJson['username'] = setUsername;
+        await _storage.write(StorageKeys.userData, userDataJson);
+      }
+
+      // Show success message
+      Get.snackbar('Success', message, snackPosition: SnackPosition.BOTTOM);
+
       // Navigate to Appeal Preferences (step 7)
       Get.toNamed(Routes.APPEAL_PREFERENCES);
+    } on ApiException catch (e) {
+      // Handle API errors
+      if (e.errorModel != null) {
+        final errorModel = e.errorModel!;
+
+        // Check for username field errors (422 validation error)
+        final usernameErr = errorModel.getFieldError('username');
+        if (usernameErr != null) {
+          usernameError.value = usernameErr;
+          isStep6Valid.value = false;
+        }
+
+        // Handle 403 - Username already set
+        if (e.statusCode == 403) {
+          usernameError.value = errorModel.message;
+          Get.snackbar(
+            'Error',
+            errorModel.message,
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        } else if (e.statusCode == 401) {
+          // Handle 401 - Unauthenticated
+          Get.snackbar(
+            'Authentication Error',
+            'Please login again to continue.',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        } else {
+          // Other errors
+          Get.snackbar(
+            'Error',
+            errorModel.message,
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      } else {
+        // Generic error
+        Get.snackbar('Error', e.message, snackPosition: SnackPosition.BOTTOM);
+      }
+    } catch (e) {
+      // Handle unexpected errors
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -491,27 +722,66 @@ class SignupController extends GetxController {
 
   // Resend OTP
   Future<void> onResendOtp() async {
-    if (!canResendOtp.value) return;
+    if (!canResendOtp.value || isLoading.value) return;
 
     isLoading.value = true;
     canResendOtp.value = false;
+    otpError.value = '';
+
     try {
-      // TODO: Implement actual OTP resend API call
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
-      otpController.clear();
-      Get.snackbar(
-        'Success',
-        'Verification code has been resent.',
-        snackPosition: SnackPosition.BOTTOM,
+      final resendOtpRequest = ResendOtpRequestModel(
+        email: emailController.text.trim(),
       );
-      // Enable resend after 30 seconds
-      Future.delayed(const Duration(seconds: 30), () {
+
+      final response = await _apiService.post(
+        ApiConstants.resendOtp,
+        resendOtpRequest.toJson(),
+        includeCsrf: true,
+      );
+
+      final resendOtpResponse = ResendOtpResponseModel.fromJson(response);
+
+      if (resendOtpResponse.success) {
+        otpController.clear();
+        Get.snackbar(
+          'Success',
+          resendOtpResponse.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        // Enable resend after 30 seconds
+        Future.delayed(const Duration(seconds: 30), () {
+          canResendOtp.value = true;
+        });
+      } else {
+        otpError.value = resendOtpResponse.message;
+        Get.snackbar(
+          'Error',
+          resendOtpResponse.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
         canResendOtp.value = true;
-      });
+      }
+    } on ApiException catch (e) {
+      // Handle API errors
+      if (e.errorModel != null) {
+        final errorModel = e.errorModel!;
+        otpError.value = errorModel.message;
+        Get.snackbar(
+          'Error',
+          errorModel.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } else {
+        otpError.value = e.message;
+        Get.snackbar('Error', e.message, snackPosition: SnackPosition.BOTTOM);
+      }
+      canResendOtp.value = true;
     } catch (e) {
+      // Handle unexpected errors
+      otpError.value = 'Failed to resend code. Please try again.';
       Get.snackbar(
         'Error',
-        'Failed to resend code. Please try again.',
+        'An unexpected error occurred. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
       );
       canResendOtp.value = true;

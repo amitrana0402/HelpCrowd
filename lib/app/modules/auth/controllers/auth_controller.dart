@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/constants/api_constants.dart';
+import '../../../core/constants/storage_keys.dart';
 import '../../../routes/app_pages.dart';
 import '../../../services/api_service.dart';
 import '../../../data/models/login_request_model.dart';
@@ -23,6 +25,9 @@ class AuthController extends GetxController {
 
   // API Service
   late final ApiService _apiService;
+
+  // Storage
+  final GetStorage _storage = GetStorage();
 
   @override
   void onInit() {
@@ -100,16 +105,32 @@ class AuthController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
         );
 
-        // TODO: Save user data and token to storage
-        // if (loginResponse.data?.token != null) {
-        //   await storageService.saveToken(loginResponse.data!.token!);
-        // }
-        // if (loginResponse.data?.user != null) {
-        //   await storageService.saveUser(loginResponse.data!.user!);
-        // }
+        // Save user data and token to storage
+        if (loginResponse.data?.token != null) {
+          await _storage.write(
+            StorageKeys.userToken,
+            loginResponse.data!.token!,
+          );
+          await _storage.write(StorageKeys.isLoggedIn, true);
+        }
+        if (loginResponse.data?.user != null) {
+          await _storage.write(
+            StorageKeys.userData,
+            loginResponse.data!.user!.toJson(),
+          );
+          if (loginResponse.data!.user!.email != null) {
+            await _storage.write(
+              StorageKeys.userEmail,
+              loginResponse.data!.user!.email!,
+            );
+          }
+        }
 
-        // Navigate to home after successful login
-        Get.offAllNamed(Routes.HOME);
+        if (loginResponse.data?.user?.username == null) {
+          Get.offAllNamed(Routes.SIGNUP_STEP6);
+        } else {
+          Get.offAllNamed(Routes.HOME);
+        }
       } else {
         // Login failed
         passwordError.value = loginResponse.message;

@@ -98,7 +98,7 @@ class DonationPreferencesController extends GetxController {
       Get.find<SignupController>().updateStepTo9();
     }
     // Navigate to Specify Amount (step 9)
-    Get.toNamed(Routes.SPECIFY_AMOUNT);
+    Get.offAllNamed(Routes.MAIN_NAVIGATION);
   }
 
   // Continue to next step

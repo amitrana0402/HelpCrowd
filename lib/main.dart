@@ -4,7 +4,9 @@ import 'package:get_storage/get_storage.dart';
 import 'app/core/theme/app_theme.dart';
 import 'app/routes/app_pages.dart' show AppPages, Routes;
 import 'app/core/constants/storage_keys.dart';
+// import 'app/core/constants/api_constants.dart'; // Will be needed when profile API is available
 import 'app/services/api_service.dart';
+import 'app/data/models/user_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,19 +16,95 @@ void main() async {
   Get.put(ApiService(), permanent: true);
   await Get.find<ApiService>().init();
 
-  // Determine initial route based on onboarding status
-  final storage = GetStorage();
-  final onboardingCompleted =
-      storage.read(StorageKeys.onboardingCompleted) ?? false;
-  final initialRoute = !onboardingCompleted ? Routes.LANDING : Routes.INTRO;
+  // Determine initial route based on app state
+  final initialRoute = await _determineInitialRoute();
 
   runApp(
     GetMaterialApp(
       title: "HelpCrowd",
       theme: AppTheme.lightTheme,
-      initialRoute: Routes.INTRO,
+      initialRoute: initialRoute,
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),
   );
+}
+
+/// Determines the initial route based on onboarding status, token, and user profile
+Future<String> _determineInitialRoute() async {
+  final storage = GetStorage();
+
+  // Step 1: Check if onboarding is completed
+  final onboardingCompleted =
+      storage.read(StorageKeys.onboardingCompleted) ?? false;
+
+  if (!onboardingCompleted) {
+    // Onboarding not done, navigate to intro page
+    return Routes.INTRO;
+  }
+
+  // Step 2: Check if user has token
+  final userToken = storage.read<String>(StorageKeys.userToken);
+
+  if (userToken == null || userToken.isEmpty) {
+    // No token, navigate to landing page
+    return Routes.LANDING;
+  }
+
+  // Step 3: Check if token is valid using profile API
+  // Note: Profile API is not available yet, so this is commented out
+  // When available, uncomment and use the profile API to validate token
+  /*
+  try {
+    final apiService = Get.find<ApiService>();
+    final profileResponse = await apiService.get(
+      ApiConstants.profile,
+      authToken: userToken,
+    );
+
+    // Parse user profile
+    final userData = profileResponse['data'] ?? profileResponse;
+    final user = UserModel.fromJson(
+      userData is Map<String, dynamic> ? userData : {},
+    );
+
+    // Step 4: Check if profile has username
+    if (user.username != null && user.username!.isNotEmpty) {
+      // User has username, navigate to main navigation
+      return Routes.MAIN_NAVIGATION;
+    } else {
+      // User doesn't have username, navigate to signup step 6
+      return Routes.SIGNUP_STEP6;
+    }
+  } catch (e) {
+    // Token is invalid or API call failed, navigate to landing
+    return Routes.LANDING;
+  }
+  */
+
+  // Temporary: Check user data from storage for username
+  // This will be replaced with profile API call when available
+  try {
+    final userDataJson = storage.read<Map<String, dynamic>>(
+      StorageKeys.userData,
+    );
+    if (userDataJson != null) {
+      final user = UserModel.fromJson(userDataJson);
+
+      // Check if profile has username
+      if (user.username != null && user.username!.isNotEmpty) {
+        // User has username, navigate to main navigation
+        return Routes.MAIN_NAVIGATION;
+      } else {
+        // User doesn't have username, navigate to signup step 6
+        return Routes.SIGNUP_STEP6;
+      }
+    } else {
+      // No user data in storage, navigate to landing
+      return Routes.LANDING;
+    }
+  } catch (e) {
+    // Error reading user data, navigate to landing
+    return Routes.LANDING;
+  }
 }
