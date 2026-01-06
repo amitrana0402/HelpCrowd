@@ -15,7 +15,12 @@ class RewardsView extends GetView<RewardsController> {
       backgroundColor: AppColors.backgroundLight,
       appBar: _buildAppBar(),
       body: SafeArea(
-        child: _buildRewardsList(),
+        child: Column(
+          children: [
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+            Expanded(child: _buildRewardsList()),
+          ],
+        ),
       ),
     );
   }
@@ -76,11 +81,7 @@ class RewardsView extends GetView<RewardsController> {
         child: Stack(
           children: [
             // Horizontal line pattern overlay
-            Positioned.fill(
-              child: CustomPaint(
-                painter: _LinePatternPainter(),
-              ),
-            ),
+            Positioned.fill(child: CustomPaint(painter: _LinePatternPainter())),
             Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingL),
               child: Row(
@@ -89,9 +90,7 @@ class RewardsView extends GetView<RewardsController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildStarbucksTitle(),
-                      ],
+                      children: [_buildStarbucksTitle()],
                     ),
                   ),
                   const SizedBox(width: AppDimensions.paddingM),
@@ -120,11 +119,7 @@ class RewardsView extends GetView<RewardsController> {
           WidgetSpan(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Icon(
-                Icons.favorite,
-                color: AppColors.error,
-                size: 36,
-              ),
+              child: Icon(Icons.favorite, color: AppColors.error, size: 36),
             ),
           ),
           TextSpan(
@@ -206,9 +201,7 @@ class RewardsView extends GetView<RewardsController> {
                       children: [
                         Text(
                           '\$',
-                          style: AppTextStyles.h2Light.copyWith(
-                            fontSize: 24,
-                          ),
+                          style: AppTextStyles.h2Light.copyWith(fontSize: 24),
                         ),
                         Text(
                           reward.price ?? '',
@@ -230,9 +223,7 @@ class RewardsView extends GetView<RewardsController> {
                       const SizedBox(height: AppDimensions.paddingM),
                       Text(
                         reward.finePrint!,
-                        style: AppTextStyles.captionLight.copyWith(
-                          fontSize: 8,
-                        ),
+                        style: AppTextStyles.captionLight.copyWith(fontSize: 8),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -348,11 +339,11 @@ class RewardsView extends GetView<RewardsController> {
                       height: 60,
                       decoration: BoxDecoration(
                         color: AppColors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusS,
+                        ),
                       ),
-                      child: CustomPaint(
-                        painter: _CinemaPatternPainter(),
-                      ),
+                      child: CustomPaint(painter: _CinemaPatternPainter()),
                     ),
                   ],
                 ),
@@ -374,11 +365,7 @@ class _LinePatternPainter extends CustomPainter {
       ..strokeWidth = 1;
 
     for (double y = 0; y < size.height; y += 10) {
-      canvas.drawLine(
-        Offset(0, y),
-        Offset(size.width, y),
-        paint,
-      );
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
     }
   }
 
@@ -407,4 +394,3 @@ class _CinemaPatternPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-

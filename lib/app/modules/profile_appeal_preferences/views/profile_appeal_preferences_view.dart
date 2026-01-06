@@ -20,6 +20,8 @@ class ProfileAppealPreferencesView
       body: SafeArea(
         child: Column(
           children: [
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+
             // Instructional Text
             Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingL),

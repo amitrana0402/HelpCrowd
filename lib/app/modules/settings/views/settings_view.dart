@@ -17,29 +17,36 @@ class SettingsView extends GetView<SettingsController> {
       backgroundColor: AppColors.backgroundLight,
       appBar: _buildAppBar(),
       body: SafeArea(
-        child: ListView(
+        child: Column(
           children: [
-            _buildMenuList(),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50.0),
-              child: AppButton(
-                icon: SizedBox(width: 0),
-                suffixIcon: SizedBox(width: 0),
-                text: 'Log out',
-                onPressed: controller.onLogout,
-                variant: ButtonVariant.primary,
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+            Expanded(
+              child: ListView(
+                children: [
+                  _buildMenuList(),
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                    child: AppButton(
+                      icon: SizedBox(width: 0),
+                      suffixIcon: SizedBox(width: 0),
+                      text: 'Log out',
+                      onPressed: controller.onLogout,
+                      variant: ButtonVariant.primary,
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.paddingS),
+                  Text(
+                    'Version ${AppConstants.appVersion}',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  SizedBox(height: AppDimensions.paddingL),
+                ],
               ),
             ),
-            const SizedBox(height: AppDimensions.paddingS),
-            Text(
-              'Version ${AppConstants.appVersion}',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-            SizedBox(height: AppDimensions.paddingL),
           ],
         ),
       ),

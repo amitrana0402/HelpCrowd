@@ -20,6 +20,8 @@ class FavoriteAppealsView extends GetView<FavoriteAppealsController> {
       body: SafeArea(
         child: Column(
           children: [
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+
             InkWell(
               onTap: () => Get.toNamed(Routes.MAKE_ADHOC_DONATION),
               child: _buildIntroText(),

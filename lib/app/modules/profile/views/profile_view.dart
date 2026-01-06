@@ -66,7 +66,7 @@ class ProfileView extends GetView<ProfileController> {
             Container(
               width: double.infinity,
               height: 130,
-              color: AppColors.white,
+              color: AppColors.backgroundLight,
               padding: const EdgeInsets.all(AppDimensions.paddingL),
               child: Row(
                 children: [
@@ -387,20 +387,41 @@ class ProfileView extends GetView<ProfileController> {
       onTap: () => controller.onAppealTap(appeal.id),
       child: Container(
         width: 120,
-        decoration: BoxDecoration(
-          color: AppColors.lightGrey,
-          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-          child: appeal.imageUrl.isNotEmpty
-              ? Image.network(
-                  appeal.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      _buildAppealPlaceholder(),
-                )
-              : _buildAppealPlaceholder(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Container(
+                width: 120,
+                decoration: BoxDecoration(
+                  color: AppColors.lightGrey,
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                  child: appeal.imageUrl.isNotEmpty
+                      ? Image.network(
+                          appeal.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              _buildAppealPlaceholder(),
+                        )
+                      : _buildAppealPlaceholder(),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppDimensions.paddingS),
+            Text(
+              appeal.title,
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textPrimary,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
     );
@@ -452,7 +473,7 @@ class DonutChartPainter extends CustomPainter {
         ..color = category.color
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth
-        ..strokeCap = StrokeCap.round;
+        ..strokeCap = StrokeCap.butt;
 
       final rect = Rect.fromCircle(
         center: center,

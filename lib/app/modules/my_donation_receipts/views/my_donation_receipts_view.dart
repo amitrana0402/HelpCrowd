@@ -15,7 +15,14 @@ class MyDonationReceiptsView extends GetView<MyDonationReceiptsController> {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: _buildAppBar(),
-      body: SafeArea(child: _buildReceiptsList()),
+      body: SafeArea(
+        child: Column(
+          children: [
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+            Expanded(child: _buildReceiptsList()),
+          ],
+        ),
+      ),
     );
   }
 

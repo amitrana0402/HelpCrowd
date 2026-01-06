@@ -36,6 +36,8 @@ class ProfileDonationPreferencesView
       body: SafeArea(
         child: Column(
           children: [
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

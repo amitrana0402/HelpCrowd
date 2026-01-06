@@ -163,6 +163,8 @@ class HomeView extends GetView<HomeController> {
                 ),
               ),
 
+              _buildAppealsHorizontalList(),
+              SizedBox(height: AppDimensions.paddingL),
               _buildRegularNewsSection(),
               if (controller.isLoadingNews.value)
                 const Padding(
@@ -302,6 +304,104 @@ class HomeView extends GetView<HomeController> {
         ],
       );
     });
+  }
+
+  Widget _buildAppealsHorizontalList() {
+    return Obx(() {
+      final appeals = controller.appealsList;
+      if (appeals.isEmpty) return const SizedBox.shrink();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.paddingL,
+              vertical: AppDimensions.paddingM,
+            ),
+            child: Text(
+              'APPEALS',
+              style: AppTextStyles.h3.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 200,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.paddingL,
+              ),
+              itemCount: appeals.length,
+              itemBuilder: (context, index) {
+                final appeal = appeals[index];
+                return _buildAppealHorizontalCard(appeal);
+              },
+            ),
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget _buildAppealHorizontalCard(LatestAppealsModel appeal) {
+    return InkWell(
+      onTap: () {
+        Get.toNamed(Routes.APPEAL_DETAIL, arguments: appeal);
+      },
+      child: Container(
+        width: 150,
+        margin: const EdgeInsets.only(right: AppDimensions.paddingM),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+              child: appeal.imageUrl.isNotEmpty
+                  ? Image.network(
+                      appeal.imageUrl,
+                      width: 150,
+                      height: 120,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 150,
+                        height: 120,
+                        color: AppColors.lightGrey,
+                        child: const Icon(
+                          Icons.image,
+                          size: 32,
+                          color: AppColors.grey,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: 150,
+                      height: 120,
+                      color: AppColors.lightGrey,
+                      child: const Icon(
+                        Icons.image,
+                        size: 32,
+                        color: AppColors.grey,
+                      ),
+                    ),
+            ),
+            const SizedBox(height: AppDimensions.paddingS),
+            Expanded(
+              child: Text(
+                appeal.title,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildRegularNewsSection() {
@@ -595,22 +695,29 @@ class HomeView extends GetView<HomeController> {
             ),
             const SizedBox(width: AppDimensions.paddingM),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    appeal.title,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
+              child: Container(
+                height: 95,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // SizedBox(height: 8),
+                    Text(
+                      appeal.title,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (appeal.formattedDate != null) ...[
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Text(appeal.formattedDate!, style: AppTextStyles.caption),
+                    appeal.formattedDate != null
+                        ? Text(
+                            appeal.formattedDate!,
+                            style: AppTextStyles.caption,
+                          )
+                        : const SizedBox.shrink(),
                   ],
-                ],
+                ),
               ),
             ),
           ],

@@ -320,7 +320,6 @@ class TransactionsView extends GetView<TransactionsController> {
       () => ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingL),
         itemCount: controller.transactions.length,
         separatorBuilder: (context, index) =>
             const Divider(color: AppColors.lightGrey, height: 1),
@@ -337,7 +336,11 @@ class TransactionsView extends GetView<TransactionsController> {
     final iconData = controller.getIconData(transaction.iconType);
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
+      color: AppColors.white,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.paddingL,
+        vertical: AppDimensions.paddingM,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -401,7 +404,6 @@ class TransactionsView extends GetView<TransactionsController> {
       () => ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingL),
         itemCount: controller.donations.length,
         separatorBuilder: (context, index) =>
             const Divider(color: AppColors.lightGrey, height: 1),
@@ -415,7 +417,11 @@ class TransactionsView extends GetView<TransactionsController> {
 
   Widget _buildDonationItem(DonationModel donation) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
+      color: AppColors.white,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.paddingL,
+        vertical: AppDimensions.paddingM,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

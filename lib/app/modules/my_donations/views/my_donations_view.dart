@@ -19,6 +19,8 @@ class MyDonationsView extends GetView<MyDonationsController> {
       body: SafeArea(
         child: Column(
           children: [
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+
             _buildIntroText(),
             Expanded(
               child: SingleChildScrollView(

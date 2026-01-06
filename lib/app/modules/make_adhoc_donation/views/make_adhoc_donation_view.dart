@@ -18,6 +18,8 @@ class MakeAdhocDonationView extends GetView<MakeAdhocDonationController> {
       body: SafeArea(
         child: Column(
           children: [
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+
             Expanded(
               child: SingleChildScrollView(
                 child: Column(

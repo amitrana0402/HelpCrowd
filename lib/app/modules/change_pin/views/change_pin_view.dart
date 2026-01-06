@@ -16,9 +16,8 @@ class ChangePinView extends GetView<ChangePinController> {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: _buildContent(),
-            ),
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+            Expanded(child: _buildContent()),
             _buildKeypad(),
           ],
         ),
@@ -52,19 +51,19 @@ class ChangePinView extends GetView<ChangePinController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: AppDimensions.paddingXL),
-          Obx(() => Text(
-                controller.instructionText,
-                style: AppTextStyles.bodyLarge,
-                textAlign: TextAlign.center,
-              )),
+          Obx(
+            () => Text(
+              controller.instructionText,
+              style: AppTextStyles.bodyLarge,
+              textAlign: TextAlign.center,
+            ),
+          ),
           const SizedBox(height: AppDimensions.paddingXL),
           _buildPinInput(),
           const SizedBox(height: AppDimensions.paddingL),
           Text(
             'You can add or remove the PIN later from the Settings menu.',
-            style: AppTextStyles.caption.copyWith(
-              fontSize: 12,
-            ),
+            style: AppTextStyles.caption.copyWith(fontSize: 12),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppDimensions.paddingXL),
@@ -81,9 +80,11 @@ class ChangePinView extends GetView<ChangePinController> {
         children: List.generate(4, (index) {
           final digit = controller.currentPinDigits[index];
           final isActive = index == controller.currentDigitIndex.value;
-          
+
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.paddingS,
+            ),
             child: _buildPinCircle(digit, isActive),
           );
         }),
@@ -104,20 +105,11 @@ class ChangePinView extends GetView<ChangePinController> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Text(
-              digit,
-              style: AppTextStyles.h2Light.copyWith(
-                fontSize: 24,
-              ),
-            ),
+            Text(digit, style: AppTextStyles.h2Light.copyWith(fontSize: 24)),
             Positioned(
               bottom: 12,
               child: _BlinkingCursor(
-                child: Container(
-                  width: 2,
-                  height: 20,
-                  color: AppColors.white,
-                ),
+                child: Container(width: 2, height: 20, color: AppColors.white),
               ),
             ),
           ],
@@ -135,9 +127,7 @@ class ChangePinView extends GetView<ChangePinController> {
         child: Center(
           child: Text(
             digit,
-            style: AppTextStyles.h2Light.copyWith(
-              fontSize: 24,
-            ),
+            style: AppTextStyles.h2Light.copyWith(fontSize: 24),
           ),
         ),
       );
@@ -147,10 +137,7 @@ class ChangePinView extends GetView<ChangePinController> {
         width: 60,
         height: 60,
         decoration: BoxDecoration(
-          border: Border.all(
-            color: AppColors.primaryBlue,
-            width: 2,
-          ),
+          border: Border.all(color: AppColors.primaryBlue, width: 2),
           shape: BoxShape.circle,
         ),
         child: Center(
@@ -169,10 +156,7 @@ class ChangePinView extends GetView<ChangePinController> {
         width: 60,
         height: 60,
         decoration: BoxDecoration(
-          border: Border.all(
-            color: AppColors.lightGrey,
-            width: 2,
-          ),
+          border: Border.all(color: AppColors.lightGrey, width: 2),
           shape: BoxShape.circle,
         ),
       );
@@ -189,18 +173,13 @@ class ChangePinView extends GetView<ChangePinController> {
               ? AppColors.primaryBlue
               : AppColors.lightGrey,
           foregroundColor: AppColors.white,
-          padding: const EdgeInsets.symmetric(
-            vertical: AppDimensions.paddingM,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDimensions.radiusM),
           ),
           elevation: 0,
         ),
-        child: Text(
-          'Confirm',
-          style: AppTextStyles.buttonText,
-        ),
+        child: Text('Confirm', style: AppTextStyles.buttonText),
       ),
     );
   }
@@ -240,15 +219,8 @@ class ChangePinView extends GetView<ChangePinController> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         const SizedBox(width: 100), // Empty space
-        _buildKeypadButton(
-          '0',
-          onTap: () => controller.onNumberTap('0'),
-        ),
-        _buildKeypadButton(
-          '',
-          isDelete: true,
-          onTap: controller.onDeleteTap,
-        ),
+        _buildKeypadButton('0', onTap: () => controller.onNumberTap('0')),
+        _buildKeypadButton('', isDelete: true, onTap: controller.onDeleteTap),
       ],
     );
   }
@@ -282,12 +254,7 @@ class ChangePinView extends GetView<ChangePinController> {
                   color: AppColors.textPrimary,
                   size: AppDimensions.iconM,
                 )
-              : Text(
-                  number,
-                  style: AppTextStyles.h2.copyWith(
-                    fontSize: 28,
-                  ),
-                ),
+              : Text(number, style: AppTextStyles.h2.copyWith(fontSize: 28)),
         ),
       ),
     );
@@ -335,4 +302,3 @@ class _BlinkingCursorState extends State<_BlinkingCursor>
     );
   }
 }
-

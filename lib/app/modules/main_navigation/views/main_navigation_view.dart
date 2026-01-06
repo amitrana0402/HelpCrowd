@@ -15,6 +15,7 @@ class MainNavigationView extends GetView<MainNavigationController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
         child: Obx(
           () => IndexedStack(
             index: controller.currentIndex.value,

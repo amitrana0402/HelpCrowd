@@ -14,7 +14,12 @@ class PrivacySecurityView extends GetView<PrivacySecurityController> {
       backgroundColor: AppColors.backgroundLight,
       appBar: _buildAppBar(),
       body: SafeArea(
-        child: _buildSettingsList(),
+        child: Column(
+          children: [
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+            Expanded(child: _buildSettingsList()),
+          ],
+        ),
       ),
     );
   }
@@ -43,17 +48,9 @@ class PrivacySecurityView extends GetView<PrivacySecurityController> {
       padding: EdgeInsets.zero,
       children: [
         _buildPinSetting(),
-        Divider(
-          height: 1,
-          thickness: 1,
-          color: AppColors.lightGrey,
-        ),
+        Divider(height: 1, thickness: 1, color: AppColors.lightGrey),
         _buildChangePinSetting(),
-        Divider(
-          height: 1,
-          thickness: 1,
-          color: AppColors.lightGrey,
-        ),
+        Divider(height: 1, thickness: 1, color: AppColors.lightGrey),
         _buildFaceIdSetting(),
       ],
     );
@@ -101,10 +98,6 @@ class PrivacySecurityView extends GetView<PrivacySecurityController> {
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textPrimary,
               ),
-            ),
-            const Icon(
-              Icons.chevron_right,
-              color: AppColors.textSecondary,
             ),
           ],
         ),
@@ -174,4 +167,3 @@ class PrivacySecurityView extends GetView<PrivacySecurityController> {
     );
   }
 }
-

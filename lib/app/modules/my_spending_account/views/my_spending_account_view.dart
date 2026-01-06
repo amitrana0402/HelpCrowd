@@ -19,6 +19,11 @@ class MySpendingAccountView extends GetView<MySpendingAccountController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const Divider(
+                color: AppColors.lightGrey,
+                height: 1,
+                thickness: 1,
+              ),
               const SizedBox(height: AppDimensions.paddingXL),
               _buildPiggyBankIcon(),
               const SizedBox(height: AppDimensions.paddingL),

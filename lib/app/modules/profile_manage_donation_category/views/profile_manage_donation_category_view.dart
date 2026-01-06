@@ -20,16 +20,19 @@ class ProfileManageDonationCategoryView
       body: SafeArea(
         child: Column(
           children: [
+            const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+
             // Introductory Text
             Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingL),
               child: Align(
-                alignment: Alignment.centerLeft,
+                alignment: Alignment.center,
                 child: Text(
                   'Choose the categories you want to donate from your everyday transactions.',
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.textPrimary,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),

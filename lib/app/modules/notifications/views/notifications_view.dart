@@ -15,7 +15,13 @@ class NotificationsView extends GetView<NotificationsController> {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: _buildAppBar(),
-      body: _buildActivityList(),
+
+      body: Column(
+        children: [
+          const Divider(color: AppColors.lightGrey, height: 1, thickness: 1),
+          Expanded(child: _buildActivityList()),
+        ],
+      ),
     );
   }
 
@@ -50,7 +56,8 @@ class NotificationsView extends GetView<NotificationsController> {
   }
 
   Widget _buildActivityItem(ActivityModel activity) {
-    return Padding(
+    return Container(
+      color: AppColors.white,
       padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.paddingL,
         vertical: AppDimensions.paddingM,
