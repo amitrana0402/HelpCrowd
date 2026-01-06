@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:help_crowd/app/widgets/buttons/app_button.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../routes/app_pages.dart';
+import '../../../data/models/latest_appeals_model.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -133,8 +136,34 @@ class HomeView extends GetView<HomeController> {
               if (controller.featuredNews != null)
                 _buildFeaturedArticle(controller.featuredNews!),
               _buildTopStoriesSection(),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40.0,
+                  vertical: 20.0,
+                ),
+
+                child: AppButton(
+                  text: 'Donate now',
+                  onPressed: () {},
+                  variant: ButtonVariant.primary,
+                  icon: SizedBox(width: 33, height: 33),
+                  suffixIcon: Container(
+                    width: 33,
+                    height: 33,
+                    decoration: const BoxDecoration(
+                      color: AppColors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: AppColors.primaryBlue,
+                    ),
+                  ),
+                ),
+              ),
+
               _buildRegularNewsSection(),
-              _buildDonateButton(),
               if (controller.isLoadingNews.value)
                 const Padding(
                   padding: EdgeInsets.all(AppDimensions.paddingL),
@@ -164,92 +193,89 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildFeaturedArticle(news) {
     return Container(
-      color: AppColors.lightBlue.withOpacity(0.1),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Image.network(
-                news.imageUrl,
-                width: double.infinity,
-                height: 250,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 250,
-                  color: AppColors.lightGrey,
-                  child: const Icon(
-                    Icons.image,
-                    size: 48,
-                    color: AppColors.grey,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(AppDimensions.paddingL),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.7),
-                      ],
+      padding: const EdgeInsets.all(20),
+      color: AppColors.primaryBlue.withOpacity(0.2),
+
+      child: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      news.imageUrl,
+                      width: double.infinity,
+                      height: 250,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 250,
+                        color: AppColors.lightGrey,
+                        child: const Icon(
+                          Icons.image,
+                          size: 48,
+                          color: AppColors.grey,
+                        ),
+                      ),
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        news.title,
-                        style: AppTextStyles.h2Light,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(AppDimensions.paddingL),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.7),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: AppDimensions.paddingM),
-                      InkWell(
-                        onTap: () {
-                          Get.toNamed(Routes.NEWS_DETAIL, arguments: news);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppDimensions.paddingM,
-                            vertical: AppDimensions.paddingS,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            news.title,
+                            style: AppTextStyles.h2Light,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryBlue,
-                            borderRadius: BorderRadius.circular(
-                              AppDimensions.radiusM,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
+                          const SizedBox(height: AppDimensions.paddingM),
+                          InkWell(
+                            onTap: () {
+                              Get.toNamed(Routes.NEWS_DETAIL, arguments: news);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppDimensions.paddingXL,
+                                vertical: AppDimensions.paddingS,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryBlue,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              child: Text(
                                 'Read more',
                                 style: AppTextStyles.buttonText,
                               ),
-                              const SizedBox(width: AppDimensions.paddingS),
-                              const Icon(
-                                Icons.arrow_forward,
-                                size: AppDimensions.iconS,
-                                color: AppColors.white,
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -266,7 +292,10 @@ class HomeView extends GetView<HomeController> {
             padding: const EdgeInsets.all(AppDimensions.paddingL),
             child: Text(
               'TOP STORIES',
-              style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.bold),
+              style: AppTextStyles.h3.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
             ),
           ),
           ...topStories.map((news) => _buildNewsCard(news)),
@@ -290,125 +319,93 @@ class HomeView extends GetView<HomeController> {
       onTap: () {
         Get.toNamed(Routes.NEWS_DETAIL, arguments: news);
       },
-      child: Container(
-        margin: const EdgeInsets.only(
-          left: AppDimensions.paddingL,
-          right: AppDimensions.paddingL,
-          bottom: AppDimensions.paddingL,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black.withOpacity(0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: SizedBox(
+        height: 410,
+        child: Stack(
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(AppDimensions.radiusM),
-                topRight: Radius.circular(AppDimensions.radiusM),
-              ),
-              child: Image.network(
-                news.imageUrl,
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 200,
-                  color: AppColors.lightGrey,
-                  child: const Icon(
-                    Icons.image,
-                    size: 48,
-                    color: AppColors.grey,
-                  ),
-                ),
+            Image.network(
+              news.imageUrl,
+              width: double.infinity,
+              height: 175,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                height: 175,
+                color: AppColors.lightGrey,
+                child: const Icon(Icons.image, size: 48, color: AppColors.grey),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingL),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    news.title,
-                    style: AppTextStyles.h3,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    news.description,
-                    style: AppTextStyles.bodyMedium,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (news.datePosted != null)
-                        Text(news.datePosted!, style: AppTextStyles.caption)
-                      else
-                        const SizedBox.shrink(),
-                      InkWell(
-                        onTap: () {
-                          Get.toNamed(Routes.NEWS_DETAIL, arguments: news);
-                        },
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryBlue,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.arrow_forward,
-                            size: AppDimensions.iconS,
-                            color: AppColors.white,
+
+            Positioned(
+              top: 150,
+              left: 20,
+              right: 20,
+              child: Container(
+                padding: const EdgeInsets.all(AppDimensions.paddingL),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      news.title,
+                      style: AppTextStyles.bodyLarge.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: AppDimensions.paddingS),
+
+                    Text(
+                      news.description,
+                      style: AppTextStyles.bodyLarge.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textDark.withOpacity(0.8),
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: AppDimensions.paddingM),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (news.datePosted != null)
+                          Text(news.datePosted!, style: AppTextStyles.caption)
+                        else
+                          const SizedBox.shrink(),
+                        InkWell(
+                          onTap: () {
+                            Get.toNamed(Routes.NEWS_DETAIL, arguments: news);
+                          },
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryBlue,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: AppDimensions.iconS,
+                              color: AppColors.white,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDonateButton() {
-    return Container(
-      margin: const EdgeInsets.all(AppDimensions.paddingL),
-      child: ElevatedButton(
-        onPressed: () {
-          // Navigate to donate screen
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryBlue,
-          padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Donate now', style: AppTextStyles.buttonText),
-            const SizedBox(width: AppDimensions.paddingS),
-            const Icon(
-              Icons.arrow_forward,
-              size: AppDimensions.iconS,
-              color: AppColors.white,
             ),
           ],
         ),
@@ -422,112 +419,202 @@ class HomeView extends GetView<HomeController> {
         controller.appealsList.clear();
         controller.currentAppealsPage.value = 1;
         controller.hasMoreAppeals.value = true;
+        controller.isInitialLoadingAppeals.value = true;
         await controller.loadInitialAppeals();
       },
       child: Obx(() {
-        if (controller.appealsList.isEmpty &&
-            controller.isLoadingAppeals.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primaryBlue),
-          );
+        // Show shimmer on initial load
+        if (controller.isInitialLoadingAppeals.value &&
+            controller.appealsList.isEmpty) {
+          return _buildShimmerList();
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(AppDimensions.paddingL),
-          itemCount:
-              controller.appealsList.length +
-              (controller.isLoadingAppeals.value ? 1 : 0) +
-              (!controller.hasMoreAppeals.value &&
-                      controller.appealsList.isNotEmpty
-                  ? 1
-                  : 0),
-          itemBuilder: (context, index) {
-            if (index == controller.appealsList.length) {
-              if (controller.isLoadingAppeals.value) {
-                return const Padding(
-                  padding: EdgeInsets.all(AppDimensions.paddingL),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.primaryBlue,
-                    ),
-                  ),
-                );
-              } else if (!controller.hasMoreAppeals.value) {
-                return Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingL),
-                  child: Center(
-                    child: Text(
-                      'No more appeals to load',
-                      style: AppTextStyles.caption,
-                    ),
-                  ),
-                );
-              }
+        return NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (!controller.isLoadingAppeals.value &&
+                controller.hasMoreAppeals.value &&
+                scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent - 200) {
+              controller.loadMoreAppeals();
             }
-
-            if (index < controller.appealsList.length) {
-              final appeal = controller.appealsList[index];
-              final appealDate = controller.getAppealDate(index);
-
-              // Load more when near the end (3 items before the end)
-              if (index == controller.appealsList.length - 3 &&
-                  !controller.isLoadingAppeals.value &&
-                  controller.hasMoreAppeals.value) {
-                controller.loadMoreAppeals();
-              }
-
-              return _buildAppealCard(appeal, appealDate);
-            }
-
-            return const SizedBox.shrink();
+            return false;
           },
+          child: ListView.builder(
+            padding: const EdgeInsets.all(AppDimensions.paddingL),
+            itemCount:
+                controller.appealsList.length +
+                (controller.isLoadingAppeals.value ? 1 : 0) +
+                (!controller.hasMoreAppeals.value &&
+                        controller.appealsList.isNotEmpty
+                    ? 1
+                    : 0),
+            itemBuilder: (context, index) {
+              if (index == controller.appealsList.length) {
+                if (controller.isLoadingAppeals.value) {
+                  return const Padding(
+                    padding: EdgeInsets.all(AppDimensions.paddingL),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primaryBlue,
+                      ),
+                    ),
+                  );
+                } else if (!controller.hasMoreAppeals.value) {
+                  return Padding(
+                    padding: const EdgeInsets.all(AppDimensions.paddingL),
+                    child: Center(
+                      child: Text(
+                        'No more appeals to load',
+                        style: AppTextStyles.caption,
+                      ),
+                    ),
+                  );
+                }
+              }
+
+              if (index < controller.appealsList.length) {
+                final appeal = controller.appealsList[index];
+
+                return _buildAppealCard(appeal);
+              }
+
+              return const SizedBox.shrink();
+            },
+          ),
         );
       }),
     );
   }
 
-  Widget _buildAppealCard(appeal, String? date) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingL),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-            child: Image.network(
-              appeal.imageUrl,
+  Widget _buildShimmerList() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(AppDimensions.paddingL),
+      itemCount: 10, // Show 10 shimmer items
+      itemBuilder: (context, index) {
+        return _buildShimmerCard();
+      },
+    );
+  }
+
+  Widget _buildShimmerCard() {
+    return Shimmer.fromColors(
+      baseColor: AppColors.lightGrey.withOpacity(0.3),
+      highlightColor: AppColors.lightGrey.withOpacity(0.1),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
               width: 100,
               height: 100,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                width: 100,
-                height: 100,
-                color: AppColors.lightGrey,
-                child: const Icon(Icons.image, size: 32, color: AppColors.grey),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
               ),
             ),
-          ),
-          const SizedBox(width: AppDimensions.paddingM),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  appeal.title,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
+            const SizedBox(width: AppDimensions.paddingM),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (date != null) ...[
                   const SizedBox(height: AppDimensions.paddingS),
-                  Text(date, style: AppTextStyles.caption),
+                  Container(
+                    width: double.infinity,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.paddingS),
+                  Container(
+                    width: 100,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
                 ],
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppealCard(LatestAppealsModel appeal) {
+    return InkWell(
+      onTap: () {
+        Get.toNamed(Routes.APPEAL_DETAIL, arguments: appeal);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+              child: appeal.imageUrl.isNotEmpty
+                  ? Image.network(
+                      appeal.imageUrl,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 100,
+                        height: 100,
+                        color: AppColors.lightGrey,
+                        child: const Icon(
+                          Icons.image,
+                          size: 32,
+                          color: AppColors.grey,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: 100,
+                      height: 100,
+                      color: AppColors.lightGrey,
+                      child: const Icon(
+                        Icons.image,
+                        size: 32,
+                        color: AppColors.grey,
+                      ),
+                    ),
+            ),
+            const SizedBox(width: AppDimensions.paddingM),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    appeal.title,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (appeal.formattedDate != null) ...[
+                    const SizedBox(height: AppDimensions.paddingS),
+                    Text(appeal.formattedDate!, style: AppTextStyles.caption),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -34,7 +34,7 @@ class AppButton extends StatelessWidget {
 
     final textColor = variant == ButtonVariant.primary
         ? AppColors.buttonTextPrimary
-        : AppColors.buttonTextSecondary;
+        : AppColors.primaryBlue;
 
     final borderColor = variant == ButtonVariant.secondary
         ? AppColors.buttonTextPrimary

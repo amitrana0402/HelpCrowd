@@ -17,4 +17,7 @@ class ApiConstants {
   // Settings Endpoints
   static const String checkUsername = '/settings/username/check';
   static const String setUsername = '/settings/username';
+
+  // Appeals Endpoints
+  static const String appeals = '/appeals';
 }

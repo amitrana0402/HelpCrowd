@@ -32,6 +32,11 @@ abstract class Routes {
   static const PROFILE_APPEAL_PREFERENCES = _Paths.PROFILE_APPEAL_PREFERENCES;
   static const PROFILE_MANAGE_DONATION_CATEGORY =
       _Paths.PROFILE_MANAGE_DONATION_CATEGORY;
+  static const MY_DONATION_RECEIPTS = _Paths.MY_DONATION_RECEIPTS;
+  static const REWARDS = _Paths.REWARDS;
+  static const PRIVACY_SECURITY = _Paths.PRIVACY_SECURITY;
+  static const CHANGE_PIN = _Paths.CHANGE_PIN;
+  static const APPEAL_DETAIL = _Paths.APPEAL_DETAIL;
 }
 
 abstract class _Paths {
@@ -65,4 +70,9 @@ abstract class _Paths {
   static const PROFILE_APPEAL_PREFERENCES = '/profile-appeal-preferences';
   static const PROFILE_MANAGE_DONATION_CATEGORY =
       '/profile-manage-donation-category';
+  static const MY_DONATION_RECEIPTS = '/my-donation-receipts';
+  static const REWARDS = '/rewards';
+  static const PRIVACY_SECURITY = '/privacy-security';
+  static const CHANGE_PIN = '/change-pin';
+  static const APPEAL_DETAIL = '/appeal-detail';
 }

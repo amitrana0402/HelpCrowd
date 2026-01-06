@@ -46,19 +46,24 @@ class IntroView extends GetView<IntroController> {
                 AppImages.intro1,
               ),
               _buildOnboardingPage(
-                "Link up with causes you care about\n"
-                "and make a difference with every\n"
-                "small change you give.",
+                "Choose your transaction category\n"
+                "from your desired debit or credit\n"
+                "card and select your small\n"
+                "donation amount. It's as simple\n"
+                "as set and forget.!",
                 AppImages.intro2,
               ),
               _buildOnboardingPage(
-                "Customise your giving experience\n"
-                "and track your impact in real-time.",
+                "Make one-off donations or\n"
+                "schedule weekly donations...\n"
+                "Every little bit helps! ",
                 AppImages.intro3,
               ),
               _buildOnboardingPage(
-                "Collect and donate your loose change\n"
-                "to make the world a better place.",
+                "Even better still, we will track\n"
+                "your donations and provide you a\n"
+                "tax deduction receipt at the end\n"
+                "of the year.",
                 AppImages.intro4,
               ),
             ],

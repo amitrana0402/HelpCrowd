@@ -1,8 +1,16 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../data/models/news_model.dart';
-import '../../../data/models/appeal_model.dart';
+import '../../../data/models/latest_appeals_model.dart';
+import '../../../services/api_service.dart';
+import '../../../core/constants/api_constants.dart';
+import '../../../core/constants/storage_keys.dart';
 
 class HomeController extends GetxController {
+  // Services
+  final ApiService _apiService = Get.find<ApiService>();
+  final GetStorage _storage = GetStorage();
+
   // Tab Management
   final selectedTabIndex = 0.obs;
 
@@ -14,8 +22,9 @@ class HomeController extends GetxController {
   final int newsPageSize = 10;
 
   // Appeals Tab
-  final appealsList = <AppealModel>[].obs;
+  final appealsList = <LatestAppealsModel>[].obs;
   final isLoadingAppeals = false.obs;
+  final isInitialLoadingAppeals = true.obs; // For shimmer on first load
   final hasMoreAppeals = true.obs;
   final currentAppealsPage = 1.obs;
   final int appealsPageSize = 10;
@@ -198,6 +207,9 @@ Together, we're building resilience and hope in communities across the region.''
   // Appeals Methods
   Future<void> loadInitialAppeals() async {
     if (appealsList.isEmpty) {
+      isInitialLoadingAppeals.value = true;
+      currentAppealsPage.value = 1;
+      hasMoreAppeals.value = true;
       await loadMoreAppeals();
     }
   }
@@ -207,78 +219,80 @@ Together, we're building resilience and hope in communities across the region.''
 
     isLoadingAppeals.value = true;
 
-    // Simulate API delay
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      // Get auth token
+      final authToken = _storage.read<String>(StorageKeys.userToken);
 
-    // Mock data generation
-    final newAppeals = _generateMockAppeals(
-      currentAppealsPage.value,
-      appealsPageSize,
-    );
-    appealsList.addAll(newAppeals);
+      // Prepare query parameters
+      final queryParams = {
+        'sort': 'published_at',
+        'direction': 'desc',
+        'per_page': appealsPageSize.toString(),
+        'page': currentAppealsPage.value.toString(),
+      };
 
-    // Simulate pagination - stop after 5 pages
-    if (currentAppealsPage.value >= 5) {
-      hasMoreAppeals.value = false;
-    } else {
-      currentAppealsPage.value++;
-    }
-
-    isLoadingAppeals.value = false;
-  }
-
-  List<AppealModel> _generateMockAppeals(int page, int pageSize) {
-    final List<AppealModel> mockAppeals = [];
-    final startIndex = (page - 1) * pageSize;
-
-    final titles = [
-      'What\'s it like to work with HelpCrowd?',
-      'Become a HelpCrowd Sponsor',
-      'Help Change the World',
-      'Support Emergency Relief Efforts',
-      'Join Our Volunteer Program',
-      'Make a Difference Today',
-      'Help Families in Need',
-      'Support Education Initiatives',
-      'Contribute to Health Programs',
-      'Partner with HelpCrowd',
-    ];
-
-    for (int i = 0; i < pageSize; i++) {
-      final index = startIndex + i;
-      mockAppeals.add(
-        AppealModel(
-          id: 'appeal_$index',
-          title: titles[index % titles.length],
-          imageUrl: 'https://picsum.photos/300/300?random=${index + 1000}',
-          isSelected: false,
-        ),
+      // Make API call
+      final response = await _apiService.get(
+        ApiConstants.appeals,
+        queryParameters: queryParams,
+        authToken: authToken,
+        includeCsrf: true,
       );
+
+      // Parse response
+      if (response['success'] == true && response['data'] != null) {
+        final List<dynamic> appealsData = response['data'] as List<dynamic>;
+        final pagination = response['pagination'] as Map<String, dynamic>?;
+
+        // Convert to LatestAppealsModel list
+        final newAppeals = appealsData
+            .map(
+              (json) =>
+                  LatestAppealsModel.fromJson(json as Map<String, dynamic>),
+            )
+            .toList();
+
+        // Avoid duplicates by checking IDs
+        final existingIds = appealsList.map((e) => e.id).toSet();
+        final uniqueNewAppeals = newAppeals
+            .where((appeal) => !existingIds.contains(appeal.id))
+            .toList();
+
+        appealsList.addAll(uniqueNewAppeals);
+
+        // Update pagination state
+        if (pagination != null) {
+          final currentPage = pagination['current_page'] as int? ?? 1;
+          final lastPage = pagination['last_page'] as int? ?? 1;
+          hasMoreAppeals.value = currentPage < lastPage;
+
+          if (hasMoreAppeals.value) {
+            currentAppealsPage.value = currentPage + 1;
+          }
+        } else {
+          // If no pagination info, check if we got less than requested
+          hasMoreAppeals.value = uniqueNewAppeals.length >= appealsPageSize;
+          if (hasMoreAppeals.value) {
+            currentAppealsPage.value++;
+          }
+        }
+      } else {
+        hasMoreAppeals.value = false;
+      }
+    } catch (e) {
+      // Handle error
+      Get.snackbar(
+        'Error',
+        'Failed to load appeals: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      hasMoreAppeals.value = false;
+    } finally {
+      isLoadingAppeals.value = false;
+      // Only set isInitialLoadingAppeals to false after first load completes
+      if (isInitialLoadingAppeals.value) {
+        isInitialLoadingAppeals.value = false;
+      }
     }
-
-    return mockAppeals;
-  }
-
-  String? getAppealDate(int index) {
-    if (index == 0) return 'June 17, 2025';
-    if (index == 1) return null; // No date
-    if (index == 2) return 'May 25, 2025';
-    final daysAgo = index % 30;
-    final date = DateTime.now().subtract(Duration(days: daysAgo));
-    final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 }

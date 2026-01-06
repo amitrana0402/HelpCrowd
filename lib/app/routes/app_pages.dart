@@ -34,6 +34,8 @@ import '../modules/settings/bindings/settings_binding.dart';
 import '../modules/settings/views/settings_view.dart';
 import '../modules/news_detail/bindings/news_detail_binding.dart';
 import '../modules/news_detail/views/news_detail_view.dart';
+import '../modules/appeal_detail/bindings/appeal_detail_binding.dart';
+import '../modules/appeal_detail/views/appeal_detail_view.dart';
 import '../modules/my_donations/bindings/my_donations_binding.dart';
 import '../modules/my_donations/views/my_donations_view.dart';
 import '../modules/favorite_appeals/bindings/favorite_appeals_binding.dart';
@@ -48,6 +50,14 @@ import '../modules/profile_appeal_preferences/bindings/profile_appeal_preference
 import '../modules/profile_appeal_preferences/views/profile_appeal_preferences_view.dart';
 import '../modules/profile_manage_donation_category/bindings/profile_manage_donation_category_binding.dart';
 import '../modules/profile_manage_donation_category/views/profile_manage_donation_category_view.dart';
+import '../modules/my_donation_receipts/bindings/my_donation_receipts_binding.dart';
+import '../modules/my_donation_receipts/views/my_donation_receipts_view.dart';
+import '../modules/rewards/bindings/rewards_binding.dart';
+import '../modules/rewards/views/rewards_view.dart';
+import '../modules/privacy_security/bindings/privacy_security_binding.dart';
+import '../modules/privacy_security/views/privacy_security_view.dart';
+import '../modules/change_pin/bindings/change_pin_binding.dart';
+import '../modules/change_pin/views/change_pin_view.dart';
 
 part 'app_routes.dart';
 
@@ -165,9 +175,19 @@ class AppPages {
       binding: NewsDetailBinding(),
     ),
     GetPage(
+      name: _Paths.APPEAL_DETAIL,
+      page: () => const AppealDetailView(),
+      binding: AppealDetailBinding(),
+    ),
+    GetPage(
       name: _Paths.MY_DONATIONS,
       page: () => const MyDonationsView(),
       binding: MyDonationsBinding(),
+    ),
+    GetPage(
+      name: _Paths.MY_DONATION_RECEIPTS,
+      page: () => const MyDonationReceiptsView(),
+      binding: MyDonationReceiptsBinding(),
     ),
     GetPage(
       name: _Paths.FAVORITE_APPEALS,
@@ -198,6 +218,21 @@ class AppPages {
       name: _Paths.PROFILE_MANAGE_DONATION_CATEGORY,
       page: () => const ProfileManageDonationCategoryView(),
       binding: ProfileManageDonationCategoryBinding(),
+    ),
+    GetPage(
+      name: _Paths.REWARDS,
+      page: () => const RewardsView(),
+      binding: RewardsBinding(),
+    ),
+    GetPage(
+      name: _Paths.PRIVACY_SECURITY,
+      page: () => const PrivacySecurityView(),
+      binding: PrivacySecurityBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHANGE_PIN,
+      page: () => const ChangePinView(),
+      binding: ChangePinBinding(),
     ),
   ];
 }

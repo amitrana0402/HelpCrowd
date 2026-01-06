@@ -129,7 +129,7 @@ class AuthController extends GetxController {
         if (loginResponse.data?.user?.username == null) {
           Get.offAllNamed(Routes.SIGNUP_STEP6);
         } else {
-          Get.offAllNamed(Routes.HOME);
+          Get.offAllNamed(Routes.MAIN_NAVIGATION);
         }
       } else {
         // Login failed

@@ -53,4 +53,3 @@ class MyDonationsController extends GetxController {
     // TODO: Navigate to invoice view
   }
 }
-

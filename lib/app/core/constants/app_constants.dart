@@ -59,5 +59,6 @@ class AppImages {
   static const String scheduledDonation =
       'assets/images/scheduled_donation.png';
   static const String donationReceipt = 'assets/images/donation_receipt.png';
+  static const String donationReceiptItem = 'assets/images/donation_receipt_item.png';
   static const String rewards = 'assets/images/rewards.png';
 }

@@ -95,13 +95,13 @@ class SettingsController extends GetxController {
         // TODO: Navigate to scheduled donations
         break;
       case 'donation_receipts':
-        Get.toNamed(Routes.MY_DONATIONS);
+        Get.toNamed(Routes.MY_DONATION_RECEIPTS);
         break;
       case 'rewards':
-        // TODO: Navigate to rewards
+        Get.toNamed(Routes.REWARDS);
         break;
       case 'privacy_security':
-        // TODO: Navigate to privacy & security
+        Get.toNamed(Routes.PRIVACY_SECURITY);
         break;
       case 'push_notifications':
         // TODO: Navigate to push notifications

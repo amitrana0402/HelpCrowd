@@ -11,5 +11,9 @@ class StorageKeys {
 
   // User Data
   static const String userData = 'user_data';
+
+  // Privacy & Security
+  static const String pinEnabled = 'pin_enabled';
+  static const String faceIdEnabled = 'face_id_enabled';
 }
 

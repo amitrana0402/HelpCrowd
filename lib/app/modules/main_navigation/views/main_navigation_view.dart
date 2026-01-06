@@ -14,16 +14,18 @@ class MainNavigationView extends GetView<MainNavigationController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(
-        () => IndexedStack(
-          index: controller.currentIndex.value,
-          children: const [
-            HomeView(),
-            TransactionsView(),
-            ProfileView(),
-            NotificationsView(),
-            SettingsView(),
-          ],
+      body: SafeArea(
+        child: Obx(
+          () => IndexedStack(
+            index: controller.currentIndex.value,
+            children: const [
+              HomeView(),
+              TransactionsView(),
+              ProfileView(),
+              NotificationsView(),
+              SettingsView(),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Obx(
