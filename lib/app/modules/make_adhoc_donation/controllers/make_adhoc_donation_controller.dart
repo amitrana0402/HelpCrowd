@@ -5,7 +5,7 @@ import '../../../routes/app_pages.dart';
 class MakeAdhocDonationController extends GetxController {
   final donationAmount = 15.00.obs;
   final selectedAppeal = AppealModel(
-    id: '1',
+    id: 1,
     title: 'HELPCROWD',
     imageUrl: '',
     isSelected: true,
@@ -44,4 +44,3 @@ class MakeAdhocDonationController extends GetxController {
     Get.back();
   }
 }
-

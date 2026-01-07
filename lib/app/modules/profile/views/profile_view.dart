@@ -344,7 +344,11 @@ class ProfileView extends GetView<ProfileController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InkWell(
-          onTap: () => Get.toNamed(Routes.FAVORITE_APPEALS),
+          onTap: () async {
+            await Get.toNamed(Routes.FAVORITE_APPEALS);
+            // Refresh appeals when returning from favorite appeals page
+            controller.refreshAppeals();
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.paddingL,
@@ -360,8 +364,68 @@ class ProfileView extends GetView<ProfileController> {
           ),
         ),
         const SizedBox(height: AppDimensions.paddingM),
-        Obx(
-          () => SizedBox(
+        Obx(() {
+          if (controller.isLoadingAppeals.value) {
+            return SizedBox(
+              height: 150,
+              child: Center(
+                child: CircularProgressIndicator(color: AppColors.primaryBlue),
+              ),
+            );
+          }
+
+          if (controller.favoriteAppeals.isEmpty) {
+            return InkWell(
+              onTap: () async {
+                await Get.toNamed(Routes.FAVORITE_APPEALS);
+                controller.refreshAppeals();
+              },
+              child: Container(
+                height: 150,
+                margin: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.paddingL,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.lightGrey.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                  border: Border.all(color: AppColors.lightGrey, width: 1),
+                ),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppDimensions.paddingL),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.favorite_border,
+                          size: 48,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(height: AppDimensions.paddingXS),
+                        Text(
+                          'Favorite appeals not selected',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          'Click to choose favorite appeals',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          return SizedBox(
             height: 150,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
@@ -376,8 +440,8 @@ class ProfileView extends GetView<ProfileController> {
                 return _buildAppealCard(appeal);
               },
             ),
-          ),
-        ),
+          );
+        }),
       ],
     );
   }
@@ -402,6 +466,8 @@ class ProfileView extends GetView<ProfileController> {
                   child: appeal.imageUrl.isNotEmpty
                       ? Image.network(
                           appeal.imageUrl,
+                          width: 120,
+                          height: 120,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
                               _buildAppealPlaceholder(),
@@ -429,6 +495,8 @@ class ProfileView extends GetView<ProfileController> {
 
   Widget _buildAppealPlaceholder() {
     return Container(
+      width: 120,
+      height: 120,
       color: AppColors.lightGrey,
       child: const Icon(Icons.image, size: 48, color: AppColors.grey),
     );

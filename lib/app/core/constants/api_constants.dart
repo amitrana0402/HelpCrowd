@@ -20,4 +20,7 @@ class ApiConstants {
 
   // Appeals Endpoints
   static const String appeals = '/appeals';
+  static const String appealPreferences = '/appeal-preferences';
+  static const String saveAppealPreferences = '/appeal-preferences/preferences';
+  static const String saveAppealFavourites = '/appeal-preferences/favourites';
 }

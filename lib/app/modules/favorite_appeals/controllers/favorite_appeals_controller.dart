@@ -1,101 +1,119 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../data/models/appeal_model.dart';
+import '../../../services/api_service.dart';
+import '../../../core/constants/api_constants.dart';
+import '../../../core/constants/storage_keys.dart';
 
 class FavoriteAppealsController extends GetxController {
+  // Services
+  final ApiService _apiService = Get.find<ApiService>();
+  final GetStorage _storage = GetStorage();
+
   // List of appeals
-  final appeals = <AppealModel>[
-    AppealModel(
-      id: '1',
-      title: 'WARMTH FOR WINTER',
-      imageUrl: 'https://via.placeholder.com/80?text=Warmth',
-      isSelected: true,
-    ),
-    AppealModel(
-      id: '2',
-      title: 'SAFE SHELTER',
-      imageUrl: 'https://via.placeholder.com/80?text=Shelter',
-      isSelected: false,
-    ),
-    AppealModel(
-      id: '3',
-      title: 'EMERGENCY MEDICAL AID',
-      imageUrl: 'https://via.placeholder.com/80?text=Medical',
-      isSelected: false,
-    ),
-    AppealModel(
-      id: '4',
-      title: 'FOOD RELIEF',
-      imageUrl: 'https://via.placeholder.com/80?text=Food',
-      isSelected: false,
-    ),
-    AppealModel(
-      id: '5',
-      title: 'SUPPORT FOR SURVIVORS',
-      imageUrl: 'https://via.placeholder.com/80?text=Survivors',
-      isSelected: false,
-    ),
-    AppealModel(
-      id: '6',
-      title: 'MENTAL HEALTH ACCESS',
-      imageUrl: 'https://via.placeholder.com/80?text=Mental',
-      isSelected: false,
-    ),
-    AppealModel(
-      id: '7',
-      title: 'CHILDHOOD VACCINATIONS',
-      imageUrl: 'https://via.placeholder.com/80?text=Vaccine',
-      isSelected: false,
-    ),
-    AppealModel(
-      id: '8',
-      title: 'MOBILE HEALTH CLINICS',
-      imageUrl: 'https://via.placeholder.com/80?text=Clinic',
-      isSelected: false,
-    ),
-    AppealModel(
-      id: '9',
-      title: 'WATER & SANITATION',
-      imageUrl: 'https://via.placeholder.com/80?text=Water',
-      isSelected: false,
-    ),
-    AppealModel(
-      id: '10',
-      title: 'EDUCATION FOR DISPLACED YOUTH',
-      imageUrl: 'https://via.placeholder.com/80?text=Education',
-      isSelected: false,
-    ),
-    AppealModel(
-      id: '11',
-      title: 'FIRST RESPONSE FUND',
-      imageUrl: 'https://via.placeholder.com/80?text=FirstAid',
-      isSelected: false,
-    ),
-  ].obs;
+  final appeals = <AppealModel>[].obs;
+
+  // Loading state
+  final isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
+    _loadAppeals();
+  }
+
+  // Load appeals from API
+  Future<void> _loadAppeals() async {
+    isLoading.value = true;
+    try {
+      // Get auth token
+      final authToken = _storage.read<String>(StorageKeys.userToken);
+
+      // Make API call
+      final response = await _apiService.get(
+        ApiConstants.appealPreferences,
+        authToken: authToken,
+        includeCsrf: true,
+      );
+
+      // Parse response
+      if (response['data'] != null) {
+        final List<dynamic> appealsData = response['data'] as List<dynamic>;
+        appeals.value = appealsData
+            .map((json) => AppealModel.fromJson(json as Map<String, dynamic>))
+            .toList();
+      }
+    } catch (e) {
+      // Handle error
+      Get.snackbar(
+        'Error',
+        'Failed to load appeals: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   // Toggle selection for an appeal
-  void toggleAppealSelection(String appealId) {
+  void toggleAppealSelection(int appealId) {
     final index = appeals.indexWhere((appeal) => appeal.id == appealId);
     if (index != -1) {
       appeals[index] = appeals[index].copyWith(
-        isSelected: !appeals[index].isSelected,
+        isFavourite: !appeals[index].isFavourite,
       );
     }
   }
 
   // Get selected appeals count
   int get selectedCount {
-    return appeals.where((appeal) => appeal.isSelected).length;
+    return appeals.where((appeal) => appeal.isFavourite).length;
+  }
+
+  // Get selected favorite appeals
+  List<AppealModel> get selectedFavouriteAppeals {
+    return appeals.where((appeal) => appeal.isFavourite).toList();
   }
 
   // Follow selected appeals
-  void onFollowSelected() {
-    // TODO: Implement follow functionality
-    Get.back();
+  Future<void> onFollowSelected() async {
+    // Get selected favorite appeal IDs
+    final selectedIds = selectedFavouriteAppeals
+        .map((appeal) => appeal.id)
+        .toList();
+
+    // Show loading
+    isLoading.value = true;
+
+    try {
+      // Get auth token
+      final authToken = _storage.read<String>(StorageKeys.userToken);
+
+      // Prepare request body
+      final requestBody = {'appeal_ids': selectedIds};
+
+      // Make API call to save favorites
+      final response = await _apiService.post(
+        ApiConstants.saveAppealFavourites,
+        requestBody,
+        includeCsrf: true,
+        authToken: authToken,
+      );
+
+      // Handle response
+      if (response['message'] != null) {
+        // Success - navigate back
+        Get.back();
+      }
+    } catch (e) {
+      // Handle error
+      Get.snackbar(
+        'Error',
+        'Failed to save favorites: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
-

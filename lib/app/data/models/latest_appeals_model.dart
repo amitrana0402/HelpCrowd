@@ -106,7 +106,7 @@ class LatestAppealsModel {
   // Convert to AppealModel for compatibility
   AppealModel toAppealModel({bool isSelected = false}) {
     return AppealModel(
-      id: id.toString(),
+      id: id,
       title: title,
       imageUrl: imageUrl,
       isSelected: isSelected,

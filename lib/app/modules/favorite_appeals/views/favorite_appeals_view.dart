@@ -126,10 +126,10 @@ class FavoriteAppealsView extends GetView<FavoriteAppealsController> {
 
             // Selection Indicator
             Obx(() {
-              final isSelected = controller.appeals
+              final isFavourite = controller.appeals
                   .firstWhere((a) => a.id == appeal.id)
-                  .isSelected;
-              return isSelected
+                  .isFavourite;
+              return isFavourite
                   ? Image.asset(AppImages.checked, width: 26)
                   : Padding(
                       padding: const EdgeInsets.all(7),
