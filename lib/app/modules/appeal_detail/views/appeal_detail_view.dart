@@ -76,10 +76,11 @@ class AppealDetailView extends GetView<AppealDetailController> {
       children: [
         Image.network(
           controller.appeal!.imageUrl,
-          width: double.infinity,
+          width: Get.width,
           height: MediaQuery.of(context).size.height * 0.4,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => Container(
+            width: Get.width,
             height: MediaQuery.of(context).size.height * 0.4,
             color: AppColors.lightGrey,
             child: const Icon(Icons.image, size: 48, color: AppColors.grey),
@@ -147,7 +148,10 @@ class AppealDetailView extends GetView<AppealDetailController> {
                 if (controller.formattedDate != null)
                   Text(
                     controller.formattedDate!,
-                    style: AppTextStyles.caption,
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.grey,
+                      fontSize: 10,
+                    ),
                   ),
                 const SizedBox(height: AppDimensions.paddingS),
                 _buildShareSection(),
@@ -165,7 +169,10 @@ class AppealDetailView extends GetView<AppealDetailController> {
       children: [
         Text(
           'Share',
-          style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500),
+          style: AppTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+          ),
         ),
         Row(
           children: [
@@ -247,11 +254,17 @@ class AppealDetailView extends GetView<AppealDetailController> {
         children: paragraphs.map((paragraph) {
           return Padding(
             padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
-            child: Text(paragraph.trim(), style: AppTextStyles.bodyMedium),
+            child: Text(
+              paragraph.trim(),
+              style: AppTextStyles.bodyMedium.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textPrimary,
+              ),
+            ),
           );
         }).toList(),
       ),
     );
   }
 }
-

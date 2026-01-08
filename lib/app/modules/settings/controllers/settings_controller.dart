@@ -135,7 +135,6 @@ class SettingsController extends GetxController {
       // Clear authentication data from storage
       await _storage.remove(StorageKeys.userToken);
       await _storage.remove(StorageKeys.userEmail);
-      await _storage.remove(StorageKeys.isLoggedIn);
       await _storage.remove(StorageKeys.userData);
 
       // Navigate to login screen and clear navigation stack

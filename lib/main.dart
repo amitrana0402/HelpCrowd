@@ -4,7 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'app/core/theme/app_theme.dart';
 import 'app/routes/app_pages.dart' show AppPages, Routes;
 import 'app/core/constants/storage_keys.dart';
-// import 'app/core/constants/api_constants.dart'; // Will be needed when profile API is available
+import 'app/core/constants/api_constants.dart';
 import 'app/services/api_service.dart';
 import 'app/data/models/user_model.dart';
 
@@ -52,14 +52,12 @@ Future<String> _determineInitialRoute() async {
   }
 
   // Step 3: Check if token is valid using profile API
-  // Note: Profile API is not available yet, so this is commented out
-  // When available, uncomment and use the profile API to validate token
-  /*
   try {
     final apiService = Get.find<ApiService>();
     final profileResponse = await apiService.get(
-      ApiConstants.profile,
+      ApiConstants.me,
       authToken: userToken,
+      includeCsrf: true,
     );
 
     // Parse user profile
@@ -67,6 +65,9 @@ Future<String> _determineInitialRoute() async {
     final user = UserModel.fromJson(
       userData is Map<String, dynamic> ? userData : {},
     );
+
+    // Save user data to storage for future use
+    await storage.write(StorageKeys.userData, user.toJson());
 
     // Step 4: Check if profile has username
     if (user.username != null && user.username!.isNotEmpty) {
@@ -78,33 +79,9 @@ Future<String> _determineInitialRoute() async {
     }
   } catch (e) {
     // Token is invalid or API call failed, navigate to landing
-    return Routes.LANDING;
-  }
-  */
-
-  // Temporary: Check user data from storage for username
-  // This will be replaced with profile API call when available
-  try {
-    final userDataJson = storage.read<Map<String, dynamic>>(
-      StorageKeys.userData,
-    );
-    if (userDataJson != null) {
-      final user = UserModel.fromJson(userDataJson);
-
-      // Check if profile has username
-      if (user.username != null && user.username!.isNotEmpty) {
-        // User has username, navigate to main navigation
-        return Routes.MAIN_NAVIGATION;
-      } else {
-        // User doesn't have username, navigate to signup step 6
-        return Routes.SIGNUP_STEP6;
-      }
-    } else {
-      // No user data in storage, navigate to landing
-      return Routes.LANDING;
-    }
-  } catch (e) {
-    // Error reading user data, navigate to landing
+    // Clear invalid token and user data
+    await storage.remove(StorageKeys.userToken);
+    await storage.remove(StorageKeys.userData);
     return Routes.LANDING;
   }
 }

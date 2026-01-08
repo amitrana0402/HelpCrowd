@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../core/constants/api_constants.dart';
+import '../core/constants/storage_keys.dart';
+import '../routes/app_pages.dart' show Routes;
 import '../data/models/api_error_model.dart';
 
 class ApiService extends GetxService {
@@ -60,6 +63,18 @@ class ApiService extends GetxService {
     return headers;
   }
 
+  // Handle unauthorized error and navigate to login
+  void _handleUnauthorized() {
+    final storage = GetStorage();
+
+    // Clear user token and data
+    storage.remove(StorageKeys.userToken);
+    storage.remove(StorageKeys.userData);
+
+    // Navigate to login email view and clear navigation stack
+    Get.offAllNamed(Routes.LOGIN_EMAIL);
+  }
+
   // Handle DioException and convert to ApiException
   ApiException _handleDioError(DioException error) {
     switch (error.type) {
@@ -74,6 +89,15 @@ class ApiService extends GetxService {
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
         final responseData = error.response?.data;
+
+        // Handle unauthorized (401) error
+        if (statusCode == 401) {
+          _handleUnauthorized();
+          return ApiException(
+            'Your session has expired. Please login again.',
+            statusCode: 401,
+          );
+        }
 
         if (responseData != null && responseData is Map<String, dynamic>) {
           try {

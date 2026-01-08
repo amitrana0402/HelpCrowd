@@ -530,7 +530,6 @@ class SignupController extends GetxController {
             StorageKeys.userToken,
             createAccountResult.data!.token!,
           );
-          await _storage.write(StorageKeys.isLoggedIn, true);
         }
         if (createAccountResult.data?.user != null) {
           await _storage.write(

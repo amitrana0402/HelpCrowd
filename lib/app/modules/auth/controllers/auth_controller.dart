@@ -111,7 +111,6 @@ class AuthController extends GetxController {
             StorageKeys.userToken,
             loginResponse.data!.token!,
           );
-          await _storage.write(StorageKeys.isLoggedIn, true);
         }
         if (loginResponse.data?.user != null) {
           await _storage.write(

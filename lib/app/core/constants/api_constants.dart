@@ -10,6 +10,7 @@ class ApiConstants {
   static const String resendOtp = '/auth/resend-otp';
   static const String createAccount = '/auth/create-account';
   static const String login = '/auth/login';
+  static const String me = '/auth/me';
 
   // Profile Endpoints
   // static const String profile = '/user/profile'; // Profile API endpoint (not available yet)
