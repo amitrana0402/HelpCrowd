@@ -115,20 +115,12 @@ class ProfileDonationPreferencesView
       child: Row(
         children: [
           // Icon
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: AppColors.primaryBlue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-            ),
-            child: Image.network(
-              ApiConstants.imageBaseUrl + category.icon,
-              color: AppColors.primaryBlue,
-              height: 28,
-            ),
+          Image.network(
+            ApiConstants.imageBaseUrl + category.icon,
+            width: 24,
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.error),
           ),
-
           const SizedBox(width: AppDimensions.paddingM),
 
           // Title and Amount
