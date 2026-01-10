@@ -103,6 +103,8 @@ class ProfileAppealPreferencesController extends GetxController {
       // Handle response
       if (response['message'] != null) {
         // Success
+        Get.back();
+
         Get.snackbar(
           'Success',
           'Appeal preferences saved successfully',
@@ -110,7 +112,6 @@ class ProfileAppealPreferencesController extends GetxController {
           backgroundColor: AppColors.success,
           colorText: AppColors.white,
         );
-        Get.back();
       }
     } catch (e) {
       // Handle error

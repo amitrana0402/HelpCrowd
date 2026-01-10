@@ -29,4 +29,5 @@ class ApiConstants {
   // Donation Category Preferences Endpoints
   static const String categoryPreferences = '/category-preferences';
   static const String saveCategoryPreferences = '/category-preferences/preferences';
+  static const String specifyAmounts = '/category-preferences/specify-amounts';
 }

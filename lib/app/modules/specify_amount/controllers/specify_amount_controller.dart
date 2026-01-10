@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:help_crowd/app/routes/app_pages.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../data/models/category_amount_model.dart';
 import '../../donation_preferences/controllers/donation_preferences_controller.dart';
+import '../../../services/api_service.dart';
+import '../../../core/constants/api_constants.dart';
+import '../../../core/constants/storage_keys.dart';
+import 'package:get_storage/get_storage.dart';
 
 class SpecifyAmountController extends GetxController {
+  // Services
+  final ApiService _apiService = Get.find<ApiService>();
+  final GetStorage _storage = GetStorage();
   // List of categories with amounts (only selected ones)
   final categories = <CategoryAmountModel>[].obs;
 
@@ -32,29 +40,31 @@ class SpecifyAmountController extends GetxController {
   }
 
   // Load categories from donation preferences (only selected ones)
-  void _loadCategories() {
-    if (Get.isRegistered<DonationPreferencesController>()) {
-      final donationController = Get.find<DonationPreferencesController>();
-      final selectedCategories = donationController.selectedCategories;
+  Future<void> _loadCategories() async {
+    isLoading.value = true;
+    try {
+      final authToken = _storage.read<String>(StorageKeys.userToken);
 
-      categories.value = selectedCategories.map((category) {
-        // Set default amounts for some categories
-        double? defaultAmount;
-        if (category.id == '2') {
-          // GROCERIES
-          defaultAmount = 0.50;
-        } else if (category.id == '4') {
-          // RESTAURANT & DINING
-          defaultAmount = 10.00;
-        }
+      final response = await _apiService.get(
+        ApiConstants.specifyAmounts,
+        authToken: authToken,
+        includeCsrf: true,
+      );
 
-        return CategoryAmountModel(
-          id: category.id.toString(),
-          title: category.title,
-          icon: category.icon,
-          amount: defaultAmount,
-        );
-      }).toList();
+      if (response['data'] != null) {
+        final List<dynamic> data = response['data'] as List<dynamic>;
+        categories.value = data
+            .map((json) => CategoryAmountModel.fromJson(json))
+            .toList();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to load categories: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -149,7 +159,7 @@ class SpecifyAmountController extends GetxController {
     });
   }
 
-  void saveAmount(String categoryId) {
+  Future<void> saveAmount(String categoryId) async {
     double? amountToSave;
 
     // Check if user entered custom amount
@@ -171,21 +181,51 @@ class SpecifyAmountController extends GetxController {
       return;
     }
 
-    // Update category amount
-    final index = categories.indexWhere((c) => c.id == categoryId);
-    if (index != -1) {
-      categories[index] = categories[index].copyWith(amount: amountToSave);
-    }
+    try {
+      final authToken = _storage.read<String>(StorageKeys.userToken);
 
-    // Close dialog
-    Get.back();
+      final response = await _apiService.post(
+        ApiConstants.specifyAmounts,
+        {'category_id': categoryId, 'specify_amount': amountToSave},
+        authToken: authToken,
+        includeCsrf: true,
+      );
+
+      if (response['data'] != null) {
+        final updatedCategory = CategoryAmountModel.fromJson(response['data']);
+
+        // Update category in list
+        final index = categories.indexWhere((c) => c.id == updatedCategory.id);
+        if (index != -1) {
+          categories[index] = updatedCategory;
+        }
+
+        // Close dialog
+        Get.back();
+
+        Get.snackbar(
+          'Success',
+          response['message'] ?? 'Amount updated successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.success,
+          colorText: AppColors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to save amount: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 
   // Skip this step
   void onSkip() {
     // Navigate to next step (step 10)
     // TODO: Update when step 10 is implemented
-    Get.back();
+    // Get.back();
+    Get.offAllNamed(Routes.MAIN_NAVIGATION);
   }
 
   // Continue to next step
@@ -194,7 +234,7 @@ class SpecifyAmountController extends GetxController {
     // TODO: Implement API call to save amounts
     // Navigate to next step (step 10)
     // TODO: Update when step 10 is implemented
-    Get.back();
+    // Get.back();
   }
 }
 

@@ -150,6 +150,8 @@ class ProfileManageDonationCategoryController extends GetxController {
 
       // Handle response
       if (response['message'] != null) {
+        Get.back(result: true);
+
         Get.snackbar(
           'Success',
           response['message']?.toString() ?? 'Categories saved successfully',
@@ -157,7 +159,6 @@ class ProfileManageDonationCategoryController extends GetxController {
           backgroundColor: AppColors.success,
           colorText: AppColors.white,
         );
-        Get.back();
       }
     } catch (e) {
       // Handle error

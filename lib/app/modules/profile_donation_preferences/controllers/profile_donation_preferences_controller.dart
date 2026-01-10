@@ -5,11 +5,17 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../data/models/category_amount_model.dart';
 import '../../../routes/app_pages.dart';
+import '../../../services/api_service.dart';
+import '../../../core/constants/api_constants.dart';
+import '../../../core/constants/storage_keys.dart';
+import 'package:get_storage/get_storage.dart';
 
 class ProfileDonationPreferencesController extends GetxController {
+  // Services
+  final ApiService _apiService = Get.find<ApiService>();
+  final GetStorage _storage = GetStorage();
   // List of categories with amounts
-  final categories = <CategoryAmountModel>[
-  ].obs;
+  final categories = <CategoryAmountModel>[].obs;
 
   // Loading state
   final isLoading = false.obs;
@@ -23,6 +29,36 @@ class ProfileDonationPreferencesController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _loadCategories();
+  }
+
+  // Load categories from API
+  Future<void> _loadCategories() async {
+    isLoading.value = true;
+    try {
+      final authToken = _storage.read<String>(StorageKeys.userToken);
+
+      final response = await _apiService.get(
+        ApiConstants.specifyAmounts,
+        authToken: authToken,
+        includeCsrf: true,
+      );
+
+      if (response['data'] != null) {
+        final List<dynamic> data = response['data'] as List<dynamic>;
+        categories.value = data
+            .map((json) => CategoryAmountModel.fromJson(json))
+            .toList();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to load categories: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override
@@ -120,7 +156,7 @@ class ProfileDonationPreferencesController extends GetxController {
     });
   }
 
-  void saveAmount(String categoryId) {
+  Future<void> saveAmount(String categoryId) async {
     double? amountToSave;
 
     // Check if user entered custom amount
@@ -142,22 +178,54 @@ class ProfileDonationPreferencesController extends GetxController {
       return;
     }
 
-    // Update category amount
-    final index = categories.indexWhere((c) => c.id == categoryId);
-    if (index != -1) {
-      categories[index] = categories[index].copyWith(amount: amountToSave);
-    }
+    try {
+      final authToken = _storage.read<String>(StorageKeys.userToken);
 
-    // Close dialog
-    Get.back();
+      final response = await _apiService.post(
+        ApiConstants.specifyAmounts,
+        {'category_id': categoryId, 'specify_amount': amountToSave},
+        authToken: authToken,
+        includeCsrf: true,
+      );
+
+      if (response['data'] != null) {
+        final updatedCategory = CategoryAmountModel.fromJson(response['data']);
+
+        // Update category in list
+        final index = categories.indexWhere((c) => c.id == updatedCategory.id);
+        if (index != -1) {
+          categories[index] = updatedCategory;
+        }
+
+        // Close dialog
+        Get.back();
+
+        Get.snackbar(
+          'Success',
+          response['message'] ?? 'Amount updated successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.success,
+          colorText: AppColors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to save amount: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 
   void onBackTap() {
     Get.back();
   }
 
-  void onManageCategoriesTap() {
-    Get.toNamed(Routes.PROFILE_MANAGE_DONATION_CATEGORY);
+  Future<void> onManageCategoriesTap() async {
+    var result = await Get.toNamed(Routes.PROFILE_MANAGE_DONATION_CATEGORY);
+    if (result == true) {
+      _loadCategories();
+    }
   }
 }
 
