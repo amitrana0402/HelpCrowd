@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:help_crowd/app/core/constants/api_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_dimensions.dart';
@@ -151,10 +152,10 @@ class DonationPreferencesView extends GetView<DonationPreferencesController> {
                 color: AppColors.primaryBlue.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusS),
               ),
-              child: Icon(
-                category.icon,
+              child: Image.network(
+                ApiConstants.imageBaseUrl + category.icon,
                 color: AppColors.primaryBlue,
-                size: 28,
+                height: 28,
               ),
             ),
 

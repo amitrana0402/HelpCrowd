@@ -9,30 +9,6 @@ import '../../../routes/app_pages.dart';
 class ProfileDonationPreferencesController extends GetxController {
   // List of categories with amounts
   final categories = <CategoryAmountModel>[
-    CategoryAmountModel(
-      id: '2',
-      title: 'GROCERIES',
-      icon: Icons.shopping_bag,
-      amount: 0.50,
-    ),
-    CategoryAmountModel(
-      id: '4',
-      title: 'RESTAURANT & DINING',
-      icon: Icons.restaurant,
-      amount: 10.00,
-    ),
-    CategoryAmountModel(
-      id: '6',
-      title: 'PUBLIC TRANSPORT & TAXIS',
-      icon: Icons.train,
-      amount: 2.00,
-    ),
-    CategoryAmountModel(
-      id: '8',
-      title: 'TRAVEL',
-      icon: Icons.flight,
-      amount: 5.00,
-    ),
   ].obs;
 
   // Loading state

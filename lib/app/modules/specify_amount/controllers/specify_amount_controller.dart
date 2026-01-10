@@ -49,7 +49,7 @@ class SpecifyAmountController extends GetxController {
         }
 
         return CategoryAmountModel(
-          id: category.id,
+          id: category.id.toString(),
           title: category.title,
           icon: category.icon,
           amount: defaultAmount,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:help_crowd/app/widgets/buttons/app_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_dimensions.dart';
@@ -166,20 +167,14 @@ class ChangePinView extends GetView<ChangePinController> {
   Widget _buildConfirmButton() {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
+      child: AppButton(
+        text: 'Confirm',
+        suffixIcon: Container(width: 0, height: 0),
+        icon: Container(width: 0, height: 0),
         onPressed: controller.canConfirm ? controller.onConfirmTap : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: controller.canConfirm
-              ? AppColors.primaryBlue
-              : AppColors.lightGrey,
-          foregroundColor: AppColors.white,
-          padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-          ),
-          elevation: 0,
-        ),
-        child: Text('Confirm', style: AppTextStyles.buttonText),
+        variant: controller.canConfirm
+            ? ButtonVariant.primary
+            : ButtonVariant.secondary,
       ),
     );
   }

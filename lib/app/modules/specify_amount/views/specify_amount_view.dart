@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:help_crowd/app/core/constants/api_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_dimensions.dart';
@@ -137,15 +138,14 @@ class SpecifyAmountView extends GetView<SpecifyAmountController> {
   }
 
   Widget _buildCategoryItem(
-      CategoryAmountModel category, BuildContext context) {
+    CategoryAmountModel category,
+    BuildContext context,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
       decoration: const BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: AppColors.inputBorder,
-            width: 1,
-          ),
+          bottom: BorderSide(color: AppColors.inputBorder, width: 1),
         ),
       ),
       child: Row(
@@ -158,10 +158,10 @@ class SpecifyAmountView extends GetView<SpecifyAmountController> {
               color: AppColors.primaryBlue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(AppDimensions.radiusS),
             ),
-            child: Icon(
-              category.icon,
+            child: Image.network(
+              ApiConstants.imageBaseUrl + category.icon,
               color: AppColors.primaryBlue,
-              size: 28,
+              height: 28,
             ),
           ),
 
@@ -197,10 +197,7 @@ class SpecifyAmountView extends GetView<SpecifyAmountController> {
           // Edit Icon
           IconButton(
             onPressed: () => controller.openEditDialog(category.id, context),
-            icon: const Icon(
-              Icons.edit,
-              color: AppColors.primaryBlue,
-            ),
+            icon: const Icon(Icons.edit, color: AppColors.primaryBlue),
           ),
         ],
       ),
@@ -227,4 +224,3 @@ class SpecifyAmountView extends GetView<SpecifyAmountController> {
     );
   }
 }
-

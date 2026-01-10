@@ -23,7 +23,7 @@ void main() async {
     GetMaterialApp(
       title: "HelpCrowd",
       theme: AppTheme.lightTheme,
-      initialRoute: initialRoute,
+      initialRoute: Routes.PROFILE_MANAGE_DONATION_CATEGORY,
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),

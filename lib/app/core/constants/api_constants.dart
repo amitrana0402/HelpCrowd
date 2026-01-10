@@ -3,6 +3,7 @@ class ApiConstants {
 
   // Base URL
   static const String baseUrl = 'https://helpcrowd.cso9.com/api';
+  static const String imageBaseUrl = 'https://helpcrowd.cso9.com';
 
   // Auth Endpoints
   static const String signup = '/auth/signup';
@@ -24,4 +25,8 @@ class ApiConstants {
   static const String appealPreferences = '/appeal-preferences';
   static const String saveAppealPreferences = '/appeal-preferences/preferences';
   static const String saveAppealFavourites = '/appeal-preferences/favourites';
+
+  // Donation Category Preferences Endpoints
+  static const String categoryPreferences = '/category-preferences';
+  static const String saveCategoryPreferences = '/category-preferences/preferences';
 }

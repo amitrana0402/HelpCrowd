@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CategoryAmountModel {
   final String id;
   final String title;
-  final IconData icon;
+  final String icon;
   final double? amount;
 
   CategoryAmountModel({
@@ -16,7 +16,7 @@ class CategoryAmountModel {
   CategoryAmountModel copyWith({
     String? id,
     String? title,
-    IconData? icon,
+    String? icon,
     double? amount,
   }) {
     return CategoryAmountModel(
